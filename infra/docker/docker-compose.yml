@@ -1,0 +1,146 @@
+# ============================================================================
+# Orbit — full stack: web + registry + assistant + postgres(pgvector) + redis.
+# Invoked from the repo root by the Makefile:
+#   make docker-up   ->  docker compose -f infra/docker/docker-compose.yml up -d --build --wait
+#
+# Configuration: every ${VAR:-default} below is resolved from the INVOKING
+# SHELL environment (or a `--env-file`). The repo-root .env is NOT auto-loaded,
+# because the compose project directory is infra/docker/. Defaults boot a fully
+# offline stack (MOCK_CONFLUENCE=true); export the CONFLUENCE_* / ANTHROPIC_*
+# vars (or run `docker compose --env-file .env -f infra/docker/docker-compose.yml up`)
+# for real integrations. Secrets default to EMPTY — none are hardcoded here.
+# ============================================================================
+name: orbit
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: orbit
+      POSTGRES_PASSWORD: orbit
+      POSTGRES_DB: orbit
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # runs CREATE EXTENSION vector on first boot
+      - ../db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orbit -d orbit"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  registry:
+    build:
+      context: ../..
+      dockerfile: infra/docker/registry-service.Dockerfile
+    environment:
+      NODE_ENV: production
+      REGISTRY_PORT: "4001"
+      DATABASE_URL: postgres://orbit:orbit@postgres:5432/orbit
+      REDIS_URL: redis://redis:6379
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+      # true (default) = ingest from the seed bundled in the image (SEED_PATH)
+      MOCK_CONFLUENCE: ${MOCK_CONFLUENCE:-true}
+      CONFLUENCE_BASE_URL: ${CONFLUENCE_BASE_URL:-}
+      CONFLUENCE_EMAIL: ${CONFLUENCE_EMAIL:-}
+      CONFLUENCE_API_TOKEN: ${CONFLUENCE_API_TOKEN:-}
+      CONFLUENCE_PAGE_IDS: ${CONFLUENCE_PAGE_IDS:-}
+      SYNC_CRON: ${SYNC_CRON:-}
+      SYNC_APP_TOKEN: ${SYNC_APP_TOKEN:-dev-sync-token}
+      GROUP_NAME: ${GROUP_NAME:-Aurora Group}
+      GROUP_ICON: ${GROUP_ICON:-globe}
+      GROUP_HUE: ${GROUP_HUE:-262}
+      # SEED_PATH is baked into the image (see Dockerfile)
+    ports:
+      - "4001:4001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:4001/health"]
+      interval: 10s
+      timeout: 4s
+      start_period: 30s
+      retries: 10
+    restart: unless-stopped
+
+  assistant:
+    build:
+      context: ../..
+      dockerfile: infra/docker/assistant-service.Dockerfile
+    environment:
+      NODE_ENV: production
+      ASSISTANT_PORT: "4002"
+      DATABASE_URL: postgres://orbit:orbit@postgres:5432/orbit
+      REDIS_URL: redis://redis:6379
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+      # empty = mock/offline answers; set for real LLM responses
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-claude-haiku-4-5}
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-mock}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-voyage-3-lite}
+      EMBEDDING_API_KEY: ${EMBEDDING_API_KEY:-}
+    ports:
+      - "4002:4002"
+    # intentionally NOT gated on registry health — the assistant retries until
+    # registry data / team_documents exist
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:4002/health"]
+      interval: 10s
+      timeout: 4s
+      start_period: 30s
+      retries: 10
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ../..
+      dockerfile: infra/docker/web.Dockerfile
+      args:
+        # inlined into the browser bundle at build time — must be host-reachable
+        NEXT_PUBLIC_REGISTRY_API_URL: ${NEXT_PUBLIC_REGISTRY_API_URL:-http://localhost:4001}
+        NEXT_PUBLIC_ASSISTANT_API_URL: ${NEXT_PUBLIC_ASSISTANT_API_URL:-http://localhost:4002}
+        # valueless on purpose: only forwarded when set in the shell. The
+        # default (which contains "{queueKey}" braces that compose ${VAR:-...}
+        # interpolation cannot express) lives in web.Dockerfile.
+        NEXT_PUBLIC_TICKET_URL_TEMPLATE:
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+      # server-side sync proxy (Refresh button) reaches registry over the
+      # compose network with the app token — the token never ships to the browser
+      REGISTRY_API_URL: http://registry:4001
+      SYNC_APP_TOKEN: ${SYNC_APP_TOKEN:-dev-sync-token}
+    ports:
+      - "3000:3000"
+    depends_on:
+      registry:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/"]
+      interval: 15s
+      timeout: 4s
+      start_period: 20s
+      retries: 6
+    restart: unless-stopped
+
+volumes:
+  pgdata:

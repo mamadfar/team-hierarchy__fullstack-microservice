@@ -1,0 +1,43 @@
+# ============================================================================
+# Orbit — local dev infra only: postgres (pgvector) + redis.
+# The apps run on the host in watch mode:
+#   make dev-infra   ->  docker compose -f infra/docker/docker-compose.dev.yml up -d --wait
+#   make dev
+# Matches the .env.example defaults (host ports 5433/6380 — 5432/6379 are
+# commonly taken by other local stacks):
+#   DATABASE_URL=postgres://orbit:orbit@localhost:5433/orbit
+#   REDIS_URL=redis://localhost:6380
+# ============================================================================
+name: orbit-dev
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: orbit
+      POSTGRES_PASSWORD: orbit
+      POSTGRES_DB: orbit
+    ports:
+      - "${ORBIT_DEV_PG_PORT:-5433}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # runs CREATE EXTENSION vector on first boot
+      - ../db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orbit -d orbit"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${ORBIT_DEV_REDIS_PORT:-6380}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  pgdata:

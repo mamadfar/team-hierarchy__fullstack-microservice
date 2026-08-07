@@ -1,0 +1,26 @@
+# design handoff (reference only, not part of the product)
+orbit/
+
+# deps / builds
+node_modules/
+dist/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+
+# env & secrets
+.env
+.env.local
+.env.*.local
+
+# agent planning scratch (local-only)
+plans/
+
+# test artifacts
+playwright-report/
+test-results/
+
+# misc
+.DS_Store
+Thumbs.db

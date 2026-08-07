@@ -1,0 +1,1954 @@
+{
+  "group": {
+    "name": "Aurora Group",
+    "icon": "globe",
+    "hue": 262
+  },
+  "companies": [
+    {
+      "slug": "nova",
+      "name": "NovaPay",
+      "icon": "wallet",
+      "hue": 245,
+      "description": "Payments and financial risk arm of the group.",
+      "confluencePageId": "84213977",
+      "position": 0,
+      "domains": [
+        {
+          "slug": "pay",
+          "name": "Payments & Billing",
+          "hue": 215,
+          "description": "Money in, money out, invoicing and subscriptions.",
+          "position": 0
+        },
+        {
+          "slug": "risk",
+          "name": "Risk & Compliance",
+          "hue": 346,
+          "description": "Financial crime, compliance and trust.",
+          "position": 1
+        }
+      ],
+      "tribes": [
+        {
+          "slug": "pay-acc",
+          "domainSlug": "pay",
+          "name": "Acceptance",
+          "position": 0
+        },
+        {
+          "slug": "pay-mm",
+          "domainSlug": "pay",
+          "name": "Money Movement",
+          "position": 1
+        },
+        {
+          "slug": "pay-bil",
+          "domainSlug": "pay",
+          "name": "Billing",
+          "position": 2
+        },
+        {
+          "slug": "risk-fc",
+          "domainSlug": "risk",
+          "name": "Financial Crime",
+          "position": 3
+        },
+        {
+          "slug": "risk-cp",
+          "domainSlug": "risk",
+          "name": "Compliance",
+          "position": 4
+        },
+        {
+          "slug": "risk-tr",
+          "domainSlug": "risk",
+          "name": "Trust",
+          "position": 5
+        }
+      ],
+      "teams": [
+        {
+          "queueKey": "PAY-CHK",
+          "name": "Checkout",
+          "tribeSlug": "pay-acc",
+          "description": "Hosted checkout, card forms, Apple Pay and Google Pay buttons.",
+          "icon": "cart",
+          "hue": null,
+          "apps": [
+            "Checkout Web",
+            "Pay SDK"
+          ],
+          "keywords": [
+            "payment failed",
+            "checkout error",
+            "apple pay",
+            "3ds"
+          ],
+          "channel": "#pay-checkout",
+          "lead": "Mara Kis",
+          "oncall": "pay-checkout-oncall"
+        },
+        {
+          "queueKey": "PAY-CRD",
+          "name": "Card Processing",
+          "tribeSlug": "pay-acc",
+          "description": "Card authorization, capture and acquirer connections.",
+          "icon": "card",
+          "hue": null,
+          "apps": [
+            "AuthGateway"
+          ],
+          "keywords": [
+            "declined card",
+            "authorization",
+            "acquirer"
+          ],
+          "channel": "#card-processing",
+          "lead": "Thomas Peeters",
+          "oncall": "cards-oncall"
+        },
+        {
+          "queueKey": "PAY-APM",
+          "name": "Alt Payment Methods",
+          "tribeSlug": "pay-acc",
+          "description": "iDEAL, Bancontact, SEPA debit and other local payment methods.",
+          "icon": "wallet",
+          "hue": null,
+          "apps": [
+            "APM Connect"
+          ],
+          "keywords": [
+            "ideal",
+            "bancontact",
+            "sepa",
+            "local payment"
+          ],
+          "channel": "#apm",
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "PAY-RTE",
+          "name": "Payment Routing",
+          "tribeSlug": "pay-acc",
+          "description": "Smart routing of transactions across processors for cost and success rate.",
+          "icon": "globe",
+          "hue": null,
+          "apps": [
+            "Route Optimizer"
+          ],
+          "keywords": [
+            "routing",
+            "success rate",
+            "retry logic"
+          ],
+          "channel": null,
+          "lead": "Ádám Nagy",
+          "oncall": null
+        },
+        {
+          "queueKey": "PAY-POS",
+          "name": "Terminal & POS",
+          "tribeSlug": "pay-acc",
+          "description": "In-store card terminals, terminal fleet management and POS integrations.",
+          "icon": "terminal",
+          "hue": null,
+          "apps": [
+            "Terminal OS",
+            "Fleet Manager"
+          ],
+          "keywords": [
+            "terminal offline",
+            "pos",
+            "card reader"
+          ],
+          "channel": "#pos-terminals",
+          "lead": null,
+          "oncall": "pos-oncall"
+        },
+        {
+          "queueKey": "PAY-OUT",
+          "name": "Payouts",
+          "tribeSlug": "pay-mm",
+          "description": "Merchant payouts, payout scheduling and bank transfer execution.",
+          "icon": "bank",
+          "hue": null,
+          "apps": [
+            "Payout Engine"
+          ],
+          "keywords": [
+            "payout delayed",
+            "bank transfer",
+            "missing payout"
+          ],
+          "channel": "#payouts",
+          "lead": "Inès Dubois",
+          "oncall": "payouts-oncall"
+        },
+        {
+          "queueKey": "PAY-TRS",
+          "name": "Treasury Ops",
+          "tribeSlug": "pay-mm",
+          "description": "Internal ledger, balance management and liquidity monitoring.",
+          "icon": "bank",
+          "hue": null,
+          "apps": [
+            "Ledger Core"
+          ],
+          "keywords": [
+            "ledger",
+            "balance mismatch",
+            "liquidity"
+          ],
+          "channel": null,
+          "lead": "Rik van den Berg",
+          "oncall": null
+        },
+        {
+          "queueKey": "PAY-FXS",
+          "name": "FX & Settlement",
+          "tribeSlug": "pay-mm",
+          "description": "Currency conversion rates and cross-border settlement files.",
+          "icon": "globe",
+          "hue": null,
+          "apps": [
+            "FX Rates API"
+          ],
+          "keywords": [
+            "exchange rate",
+            "settlement",
+            "currency"
+          ],
+          "channel": "#fx-settlement",
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "PAY-REC",
+          "name": "Reconciliation",
+          "tribeSlug": "pay-mm",
+          "description": "Matching processor reports against the internal ledger, exception queues.",
+          "icon": "filter",
+          "hue": null,
+          "apps": [
+            "Recon Workbench"
+          ],
+          "keywords": [
+            "reconciliation",
+            "mismatch",
+            "missing transaction"
+          ],
+          "channel": null,
+          "lead": "Zsófia Tóth",
+          "oncall": null
+        },
+        {
+          "queueKey": "PAY-SUB",
+          "name": "Subscriptions",
+          "tribeSlug": "pay-bil",
+          "description": "Recurring billing plans, upgrades, downgrades and trial logic.",
+          "icon": "receipt",
+          "hue": null,
+          "apps": [
+            "Billing Core"
+          ],
+          "keywords": [
+            "subscription",
+            "plan change",
+            "trial",
+            "renewal"
+          ],
+          "channel": "#subscriptions",
+          "lead": "Emma Claes",
+          "oncall": null
+        },
+        {
+          "queueKey": "PAY-INV",
+          "name": "Invoicing",
+          "tribeSlug": "pay-bil",
+          "description": "Invoice generation, credit notes and PDF documents.",
+          "icon": "receipt",
+          "hue": null,
+          "apps": [
+            "Invoice Service"
+          ],
+          "keywords": [
+            "wrong invoice",
+            "credit note",
+            "invoice pdf"
+          ],
+          "channel": "#invoicing",
+          "lead": null,
+          "oncall": "billing-oncall"
+        },
+        {
+          "queueKey": "PAY-DUN",
+          "name": "Dunning & Collections",
+          "tribeSlug": "pay-bil",
+          "description": "Failed payment retries, dunning emails and debt collection handoff.",
+          "icon": "mail",
+          "hue": null,
+          "apps": [
+            "Dunning Flow"
+          ],
+          "keywords": [
+            "retry",
+            "overdue",
+            "collections"
+          ],
+          "channel": null,
+          "lead": "Hugo Lambert",
+          "oncall": null
+        },
+        {
+          "queueKey": "PAY-TAX",
+          "name": "Tax Engine",
+          "tribeSlug": "pay-bil",
+          "description": "VAT and sales tax calculation and tax rate management.",
+          "icon": "doc",
+          "hue": null,
+          "apps": [
+            "Tax Calc"
+          ],
+          "keywords": [
+            "vat",
+            "tax rate",
+            "tax exempt"
+          ],
+          "channel": "#tax-engine",
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "RISK-FRO",
+          "name": "Fraud Ops Tooling",
+          "tribeSlug": "risk-fc",
+          "description": "Case management and review queues for fraud analysts.",
+          "icon": "shield",
+          "hue": null,
+          "apps": [
+            "CaseDesk"
+          ],
+          "keywords": [
+            "fraud case",
+            "manual review",
+            "blocked account"
+          ],
+          "channel": "#fraud-ops",
+          "lead": "Gábor Szűcs",
+          "oncall": null
+        },
+        {
+          "queueKey": "RISK-AML",
+          "name": "AML Screening",
+          "tribeSlug": "risk-fc",
+          "description": "Transaction monitoring rules and suspicious activity reports.",
+          "icon": "eye",
+          "hue": null,
+          "apps": [
+            "AML Monitor"
+          ],
+          "keywords": [
+            "aml",
+            "transaction monitoring",
+            "sar"
+          ],
+          "channel": "#aml",
+          "lead": null,
+          "oncall": "aml-oncall"
+        },
+        {
+          "queueKey": "RISK-DIS",
+          "name": "Disputes & Chargebacks",
+          "tribeSlug": "risk-fc",
+          "description": "Chargeback intake, evidence submission and dispute lifecycle.",
+          "icon": "card",
+          "hue": null,
+          "apps": [
+            "DisputeFlow"
+          ],
+          "keywords": [
+            "chargeback",
+            "dispute",
+            "refund abuse"
+          ],
+          "channel": "#disputes",
+          "lead": "Lotte Hendriks",
+          "oncall": null
+        },
+        {
+          "queueKey": "RISK-SAN",
+          "name": "Sanctions & Watchlists",
+          "tribeSlug": "risk-fc",
+          "description": "Sanctions list screening for customers and payments.",
+          "icon": "flag",
+          "hue": null,
+          "apps": [
+            "Screener"
+          ],
+          "keywords": [
+            "sanctions",
+            "watchlist",
+            "pep"
+          ],
+          "channel": null,
+          "lead": null,
+          "oncall": "sanctions-oncall"
+        },
+        {
+          "queueKey": "RISK-REG",
+          "name": "Regulatory Reporting",
+          "tribeSlug": "risk-cp",
+          "description": "Reports to financial regulators and license obligations.",
+          "icon": "doc",
+          "hue": null,
+          "apps": [
+            "RegReport"
+          ],
+          "keywords": [
+            "regulator",
+            "psd2 report",
+            "filing"
+          ],
+          "channel": null,
+          "lead": "Margit Oláh",
+          "oncall": null
+        },
+        {
+          "queueKey": "RISK-PRV",
+          "name": "Privacy Engineering",
+          "tribeSlug": "risk-cp",
+          "description": "GDPR tooling: data subject requests, consent and retention.",
+          "icon": "lock",
+          "hue": null,
+          "apps": [
+            "PrivacyDesk",
+            "Consent SDK"
+          ],
+          "keywords": [
+            "gdpr",
+            "delete my data",
+            "dsar",
+            "consent banner"
+          ],
+          "channel": "#privacy",
+          "lead": "Julie Lemaire",
+          "oncall": null
+        },
+        {
+          "queueKey": "RISK-AUD",
+          "name": "Audit & Controls",
+          "tribeSlug": "risk-cp",
+          "description": "Internal controls testing, SOC2 evidence and audit tooling.",
+          "icon": "doc",
+          "hue": null,
+          "apps": [
+            "ControlHub"
+          ],
+          "keywords": [
+            "soc2",
+            "audit evidence",
+            "control"
+          ],
+          "channel": "#audit",
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "RISK-MRG",
+          "name": "Model Risk Governance",
+          "tribeSlug": "risk-cp",
+          "description": "Validation and approval workflow for risk and ML models.",
+          "icon": "settings",
+          "hue": null,
+          "apps": [
+            "ModelRegistry"
+          ],
+          "keywords": [
+            "model validation",
+            "model approval"
+          ],
+          "channel": null,
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "RISK-MOD",
+          "name": "Content Moderation",
+          "tribeSlug": "risk-tr",
+          "description": "User content review tooling and moderation policies.",
+          "icon": "eye",
+          "hue": null,
+          "apps": [
+            "ModQueue"
+          ],
+          "keywords": [
+            "reported content",
+            "moderation",
+            "abuse report"
+          ],
+          "channel": "#moderation",
+          "lead": "Sam Peeters",
+          "oncall": null
+        },
+        {
+          "queueKey": "RISK-ACS",
+          "name": "Account Security",
+          "tribeSlug": "risk-tr",
+          "description": "Account takeover defense, suspicious login detection and lockouts.",
+          "icon": "lock",
+          "hue": null,
+          "apps": [
+            "ATO Shield"
+          ],
+          "keywords": [
+            "account hacked",
+            "suspicious login",
+            "locked out",
+            "2fa bypass"
+          ],
+          "channel": "#account-security",
+          "lead": null,
+          "oncall": "acctsec-oncall"
+        },
+        {
+          "queueKey": "RISK-BOT",
+          "name": "Bot & Abuse Defense",
+          "tribeSlug": "risk-tr",
+          "description": "Bot detection, rate abuse and scraping protection.",
+          "icon": "bot",
+          "hue": 15,
+          "apps": [
+            "BotWall"
+          ],
+          "keywords": [
+            "bot",
+            "captcha",
+            "scraping"
+          ],
+          "channel": "#bot-defense",
+          "lead": "Yusuf Demir",
+          "oncall": null
+        }
+      ]
+    },
+    {
+      "slug": "lumen",
+      "name": "Lumen Commerce",
+      "icon": "cart",
+      "hue": 315,
+      "description": "Consumer commerce and growth arm of the group.",
+      "confluencePageId": "84214102",
+      "position": 1,
+      "domains": [
+        {
+          "slug": "cg",
+          "name": "Customer & Growth",
+          "hue": 262,
+          "description": "Acquisition, onboarding and engagement of customers.",
+          "position": 0
+        },
+        {
+          "slug": "data",
+          "name": "Data & Intelligence",
+          "hue": 152,
+          "description": "Data platform, analytics and machine learning.",
+          "position": 1
+        }
+      ],
+      "tribes": [
+        {
+          "slug": "cg-acq",
+          "domainSlug": "cg",
+          "name": "Acquisition",
+          "position": 0
+        },
+        {
+          "slug": "cg-onb",
+          "domainSlug": "cg",
+          "name": "Onboarding",
+          "position": 1
+        },
+        {
+          "slug": "cg-eng",
+          "domainSlug": "cg",
+          "name": "Engagement",
+          "position": 2
+        },
+        {
+          "slug": "data-dp",
+          "domainSlug": "data",
+          "name": "Data Platform",
+          "position": 3
+        },
+        {
+          "slug": "data-an",
+          "domainSlug": "data",
+          "name": "Analytics",
+          "position": 4
+        },
+        {
+          "slug": "data-ml",
+          "domainSlug": "data",
+          "name": "Machine Learning",
+          "position": 5
+        }
+      ],
+      "teams": [
+        {
+          "queueKey": "CG-SEO",
+          "name": "SEO & Content Platform",
+          "tribeSlug": "cg-acq",
+          "description": "Owns the public website CMS, landing content and search ranking tooling.",
+          "icon": "search",
+          "hue": null,
+          "apps": [
+            "Website CMS",
+            "Sitemap Service"
+          ],
+          "keywords": [
+            "seo",
+            "blog",
+            "meta tags",
+            "website content"
+          ],
+          "channel": "#growth-seo",
+          "lead": "Eszter Farkas",
+          "oncall": null
+        },
+        {
+          "queueKey": "CG-PMT",
+          "name": "Performance Marketing Tech",
+          "tribeSlug": "cg-acq",
+          "description": "Ad platform integrations, conversion tracking pixels and campaign attribution.",
+          "icon": "megaphone",
+          "hue": null,
+          "apps": [
+            "AdSync",
+            "Attribution API"
+          ],
+          "keywords": [
+            "google ads",
+            "pixel",
+            "utm",
+            "attribution"
+          ],
+          "channel": "#perf-marketing",
+          "lead": "Lucas Meyer",
+          "oncall": null
+        },
+        {
+          "queueKey": "CG-REF",
+          "name": "Referrals & Incentives",
+          "tribeSlug": "cg-acq",
+          "description": "Referral links, promo codes and signup incentive campaigns.",
+          "icon": "gift",
+          "hue": null,
+          "apps": [
+            "Promo Engine"
+          ],
+          "keywords": [
+            "promo code",
+            "referral",
+            "voucher",
+            "discount"
+          ],
+          "channel": "#referrals",
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "CG-LND",
+          "name": "Landing Experience",
+          "tribeSlug": "cg-acq",
+          "description": "Public landing pages, A/B page variants and pricing pages.",
+          "icon": "flag",
+          "hue": null,
+          "apps": [
+            "Landing Builder"
+          ],
+          "keywords": [
+            "landing page",
+            "pricing page",
+            "hero"
+          ],
+          "channel": null,
+          "lead": "Noor van Dijk",
+          "oncall": null
+        },
+        {
+          "queueKey": "CG-MOB",
+          "name": "Mobile Growth",
+          "tribeSlug": "cg-acq",
+          "description": "App store listings, deep links and install attribution for mobile apps.",
+          "icon": "phone",
+          "hue": null,
+          "apps": [
+            "DeepLink Router"
+          ],
+          "keywords": [
+            "app store",
+            "deep link",
+            "install"
+          ],
+          "channel": "#mobile-growth",
+          "lead": "Petra Molnár",
+          "oncall": null
+        },
+        {
+          "queueKey": "CG-IDO",
+          "name": "Identity Onboarding",
+          "tribeSlug": "cg-onb",
+          "description": "Signup, login and account creation flows for new customers.",
+          "icon": "users",
+          "hue": null,
+          "apps": [
+            "Signup Web",
+            "Auth Screens"
+          ],
+          "keywords": [
+            "signup",
+            "registration",
+            "cannot log in",
+            "account creation"
+          ],
+          "channel": "#onboarding-identity",
+          "lead": "Julien Caron",
+          "oncall": "cg-identity-oncall"
+        },
+        {
+          "queueKey": "CG-KYC",
+          "name": "KYC Orchestration",
+          "tribeSlug": "cg-onb",
+          "description": "Identity document checks and verification vendor orchestration during onboarding.",
+          "icon": "eye",
+          "hue": null,
+          "apps": [
+            "KYC Flow",
+            "DocScan Bridge"
+          ],
+          "keywords": [
+            "kyc",
+            "id verification",
+            "document upload",
+            "selfie check"
+          ],
+          "channel": "#kyc",
+          "lead": "Sanne de Vries",
+          "oncall": "kyc-oncall"
+        },
+        {
+          "queueKey": "CG-ADR",
+          "name": "Address & Verification",
+          "tribeSlug": "cg-onb",
+          "description": "Address lookup, phone and email verification services.",
+          "icon": "map",
+          "hue": null,
+          "apps": [
+            "Verify API"
+          ],
+          "keywords": [
+            "address lookup",
+            "sms code",
+            "email verification",
+            "otp"
+          ],
+          "channel": "#verification",
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "CG-ACT",
+          "name": "Activation Journeys",
+          "tribeSlug": "cg-onb",
+          "description": "First-run product tours, checklists and activation nudges.",
+          "icon": "zap",
+          "hue": null,
+          "apps": [
+            "Journey Engine"
+          ],
+          "keywords": [
+            "product tour",
+            "activation",
+            "first run"
+          ],
+          "channel": null,
+          "lead": "Bence Szabó",
+          "oncall": null
+        },
+        {
+          "queueKey": "CG-NTF",
+          "name": "Notifications",
+          "tribeSlug": "cg-eng",
+          "description": "Email, SMS and push notification delivery platform for all product teams.",
+          "icon": "bell",
+          "hue": null,
+          "apps": [
+            "Notify API",
+            "Template Studio"
+          ],
+          "keywords": [
+            "email not received",
+            "push notification",
+            "sms delivery",
+            "unsubscribe"
+          ],
+          "channel": "#notifications",
+          "lead": "Camille Roux",
+          "oncall": "notify-oncall"
+        },
+        {
+          "queueKey": "CG-PRS",
+          "name": "Personalization",
+          "tribeSlug": "cg-eng",
+          "description": "Home feed ordering, content targeting and audience segments.",
+          "icon": "spark",
+          "hue": null,
+          "apps": [
+            "Segment Service"
+          ],
+          "keywords": [
+            "personalization",
+            "targeting",
+            "segments"
+          ],
+          "channel": null,
+          "lead": "Dávid Kovács",
+          "oncall": null
+        },
+        {
+          "queueKey": "CG-LOY",
+          "name": "Loyalty & Rewards",
+          "tribeSlug": "cg-eng",
+          "description": "Points, tiers and reward redemption features.",
+          "icon": "gift",
+          "hue": 95,
+          "apps": [
+            "Rewards Hub"
+          ],
+          "keywords": [
+            "points missing",
+            "rewards",
+            "loyalty tier"
+          ],
+          "channel": "#loyalty",
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "CG-CRM",
+          "name": "CRM Tooling",
+          "tribeSlug": "cg-eng",
+          "description": "Campaign builder and customer messaging tools for marketing teams.",
+          "icon": "megaphone",
+          "hue": null,
+          "apps": [
+            "Campaign Studio"
+          ],
+          "keywords": [
+            "campaign",
+            "newsletter",
+            "audience export"
+          ],
+          "channel": null,
+          "lead": "Femke Jansen",
+          "oncall": null
+        },
+        {
+          "queueKey": "CG-IAM2",
+          "name": "In-App Messaging",
+          "tribeSlug": "cg-eng",
+          "description": "Banners, modals and inbox messages inside the product.",
+          "icon": "mail",
+          "hue": null,
+          "apps": [
+            "InApp SDK"
+          ],
+          "keywords": [
+            "banner",
+            "in-app message",
+            "announcement"
+          ],
+          "channel": "#inapp-messaging",
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "DATA-ING",
+          "name": "Ingestion Pipelines",
+          "tribeSlug": "data-dp",
+          "description": "Batch and CDC pipelines landing source data into the lake.",
+          "icon": "filter",
+          "hue": null,
+          "apps": [
+            "PipeRunner"
+          ],
+          "keywords": [
+            "pipeline failed",
+            "ingestion",
+            "cdc",
+            "data late"
+          ],
+          "channel": "#data-ingestion",
+          "lead": "Nóra Szilágyi",
+          "oncall": "data-ing-oncall"
+        },
+        {
+          "queueKey": "DATA-LKE",
+          "name": "Data Lake",
+          "tribeSlug": "data-dp",
+          "description": "Lakehouse storage, table formats and compute clusters.",
+          "icon": "db",
+          "hue": null,
+          "apps": [
+            "Lakehouse"
+          ],
+          "keywords": [
+            "table missing",
+            "spark",
+            "warehouse"
+          ],
+          "channel": "#data-lake",
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "DATA-STR",
+          "name": "Streaming",
+          "tribeSlug": "data-dp",
+          "description": "Kafka platform, stream processing and event schemas.",
+          "icon": "zap",
+          "hue": null,
+          "apps": [
+            "Kafka Fleet",
+            "Schema Registry"
+          ],
+          "keywords": [
+            "kafka lag",
+            "topic",
+            "event schema"
+          ],
+          "channel": "#streaming",
+          "lead": null,
+          "oncall": "streaming-oncall"
+        },
+        {
+          "queueKey": "DATA-CAT",
+          "name": "Data Catalog & Governance",
+          "tribeSlug": "data-dp",
+          "description": "Dataset discovery, ownership, lineage and access requests.",
+          "icon": "doc",
+          "hue": null,
+          "apps": [
+            "Catalog"
+          ],
+          "keywords": [
+            "data access request",
+            "lineage",
+            "dataset owner"
+          ],
+          "channel": null,
+          "lead": "Elise Peters",
+          "oncall": null
+        },
+        {
+          "queueKey": "DATA-DQ",
+          "name": "Data Quality",
+          "tribeSlug": "data-dp",
+          "description": "Quality checks, anomaly alerts and data contracts.",
+          "icon": "eye",
+          "hue": null,
+          "apps": [
+            "DQ Monitor"
+          ],
+          "keywords": [
+            "data quality",
+            "broken dashboard numbers",
+            "contract"
+          ],
+          "channel": "#data-quality",
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "DATA-BI",
+          "name": "BI & Reporting",
+          "tribeSlug": "data-an",
+          "description": "Company dashboards, self-serve BI tool and certified reports.",
+          "icon": "chart",
+          "hue": null,
+          "apps": [
+            "BI Studio"
+          ],
+          "keywords": [
+            "dashboard broken",
+            "report access",
+            "kpi"
+          ],
+          "channel": "#bi-reporting",
+          "lead": "Pauline Girard",
+          "oncall": null
+        },
+        {
+          "queueKey": "DATA-EXP",
+          "name": "Experimentation",
+          "tribeSlug": "data-an",
+          "description": "A/B testing platform, assignment and stats engine.",
+          "icon": "settings",
+          "hue": null,
+          "apps": [
+            "ExpPlatform"
+          ],
+          "keywords": [
+            "ab test",
+            "experiment",
+            "feature flag stats"
+          ],
+          "channel": null,
+          "lead": "Balázs Varga",
+          "oncall": null
+        },
+        {
+          "queueKey": "DATA-PA",
+          "name": "Product Analytics",
+          "tribeSlug": "data-an",
+          "description": "Event tracking plan, SDKs and funnel analysis tooling.",
+          "icon": "chart",
+          "hue": null,
+          "apps": [
+            "Track SDK",
+            "Funnels"
+          ],
+          "keywords": [
+            "tracking missing",
+            "events",
+            "funnel"
+          ],
+          "channel": "#product-analytics",
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "DATA-FC",
+          "name": "Forecasting",
+          "tribeSlug": "data-an",
+          "description": "Demand and revenue forecasting models for planning.",
+          "icon": "spark",
+          "hue": null,
+          "apps": [
+            "ForecastLab"
+          ],
+          "keywords": [
+            "forecast",
+            "projection"
+          ],
+          "channel": null,
+          "lead": "Willem Smit",
+          "oncall": null
+        },
+        {
+          "queueKey": "DATA-MLP",
+          "name": "ML Platform",
+          "tribeSlug": "data-ml",
+          "description": "Model training, feature store and model serving infrastructure.",
+          "icon": "bot",
+          "hue": null,
+          "apps": [
+            "MLFlow Stack",
+            "FeatureStore"
+          ],
+          "keywords": [
+            "model deploy",
+            "feature store",
+            "gpu"
+          ],
+          "channel": "#ml-platform",
+          "lead": null,
+          "oncall": "mlp-oncall"
+        },
+        {
+          "queueKey": "DATA-REC",
+          "name": "Recommendations",
+          "tribeSlug": "data-ml",
+          "description": "Product and content recommendation models.",
+          "icon": "spark",
+          "hue": null,
+          "apps": [
+            "RecoServe"
+          ],
+          "keywords": [
+            "recommendations wrong",
+            "ranking"
+          ],
+          "channel": null,
+          "lead": "Anna Kelemen",
+          "oncall": null
+        },
+        {
+          "queueKey": "DATA-FRM",
+          "name": "Fraud Models",
+          "tribeSlug": "data-ml",
+          "description": "Real-time fraud scoring models for payments and signups.",
+          "icon": "shield",
+          "hue": null,
+          "apps": [
+            "FraudScore"
+          ],
+          "keywords": [
+            "false positive",
+            "fraud score",
+            "model threshold"
+          ],
+          "channel": "#fraud-models",
+          "lead": null,
+          "oncall": "fraud-models-oncall"
+        },
+        {
+          "queueKey": "DATA-GEN",
+          "name": "GenAI Enablement",
+          "tribeSlug": "data-ml",
+          "description": "LLM gateway, prompt tooling and AI feature guidelines.",
+          "icon": "bot",
+          "hue": 305,
+          "apps": [
+            "LLM Gateway"
+          ],
+          "keywords": [
+            "llm",
+            "ai feature",
+            "prompt",
+            "copilot"
+          ],
+          "channel": "#genai",
+          "lead": "Maarten Bos",
+          "oncall": null
+        },
+        {
+          "queueKey": "DATA-SRC",
+          "name": "Search Relevance",
+          "tribeSlug": "data-ml",
+          "description": "Product search indexing, ranking and typo tolerance.",
+          "icon": "search",
+          "hue": null,
+          "apps": [
+            "SearchCore"
+          ],
+          "keywords": [
+            "search results wrong",
+            "no results",
+            "indexing"
+          ],
+          "channel": "#search",
+          "lead": null,
+          "oncall": null
+        }
+      ]
+    },
+    {
+      "slug": "shared",
+      "name": "Aurora Shared Services",
+      "icon": "server",
+      "hue": 190,
+      "description": "Platform, infrastructure and internal operations for all group companies.",
+      "confluencePageId": "84214255",
+      "position": 2,
+      "domains": [
+        {
+          "slug": "plt",
+          "name": "Core Platform",
+          "hue": 183,
+          "description": "Infrastructure, developer experience, reliability and security.",
+          "position": 0
+        },
+        {
+          "slug": "ops",
+          "name": "Internal Operations",
+          "hue": 38,
+          "description": "Employee tech, business systems and support tooling.",
+          "position": 1
+        }
+      ],
+      "tribes": [
+        {
+          "slug": "plt-run",
+          "domainSlug": "plt",
+          "name": "Runtime",
+          "position": 0
+        },
+        {
+          "slug": "plt-dx",
+          "domainSlug": "plt",
+          "name": "Developer Experience",
+          "position": 1
+        },
+        {
+          "slug": "plt-rel",
+          "domainSlug": "plt",
+          "name": "Reliability",
+          "position": 2
+        },
+        {
+          "slug": "plt-sec",
+          "domainSlug": "plt",
+          "name": "Security Engineering",
+          "position": 3
+        },
+        {
+          "slug": "ops-et",
+          "domainSlug": "ops",
+          "name": "Employee Tech",
+          "position": 4
+        },
+        {
+          "slug": "ops-bs",
+          "domainSlug": "ops",
+          "name": "Business Systems",
+          "position": 5
+        },
+        {
+          "slug": "ops-st",
+          "domainSlug": "ops",
+          "name": "Support Tech",
+          "position": 6
+        }
+      ],
+      "teams": [
+        {
+          "queueKey": "PLT-K8S",
+          "name": "Kubernetes Platform",
+          "tribeSlug": "plt-run",
+          "description": "Managed Kubernetes clusters, namespaces and workload scheduling.",
+          "icon": "box",
+          "hue": null,
+          "apps": [
+            "K8s Fleet",
+            "Cluster Portal"
+          ],
+          "keywords": [
+            "pod crash",
+            "namespace",
+            "cluster",
+            "oom"
+          ],
+          "channel": "#k8s-platform",
+          "lead": "Gergő Horváth",
+          "oncall": "k8s-oncall"
+        },
+        {
+          "queueKey": "PLT-MSH",
+          "name": "Service Mesh",
+          "tribeSlug": "plt-run",
+          "description": "Service-to-service networking, mTLS and traffic policies.",
+          "icon": "cloud",
+          "hue": null,
+          "apps": [
+            "Mesh Control"
+          ],
+          "keywords": [
+            "mtls",
+            "service discovery",
+            "timeout between services"
+          ],
+          "channel": "#service-mesh",
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "PLT-CMP",
+          "name": "Compute & Autoscaling",
+          "tribeSlug": "plt-run",
+          "description": "VM fleets, autoscaling policies and spot capacity management.",
+          "icon": "server",
+          "hue": null,
+          "apps": [
+            "Scaler"
+          ],
+          "keywords": [
+            "autoscaling",
+            "capacity",
+            "vm"
+          ],
+          "channel": null,
+          "lead": "Daan Bakker",
+          "oncall": null
+        },
+        {
+          "queueKey": "PLT-EDG",
+          "name": "Edge & CDN",
+          "tribeSlug": "plt-run",
+          "description": "CDN configuration, WAF rules and edge caching.",
+          "icon": "globe",
+          "hue": null,
+          "apps": [
+            "Edge Config"
+          ],
+          "keywords": [
+            "cdn",
+            "cache purge",
+            "waf blocked",
+            "slow static assets"
+          ],
+          "channel": "#edge-cdn",
+          "lead": null,
+          "oncall": "edge-oncall"
+        },
+        {
+          "queueKey": "PLT-DBP",
+          "name": "Database Platform",
+          "tribeSlug": "plt-run",
+          "description": "Managed Postgres and Redis, backups, replicas and migrations support.",
+          "icon": "db",
+          "hue": null,
+          "apps": [
+            "DB Portal"
+          ],
+          "keywords": [
+            "database slow",
+            "backup restore",
+            "replica lag",
+            "migration"
+          ],
+          "channel": "#database-platform",
+          "lead": "Anouk Visser",
+          "oncall": "db-oncall"
+        },
+        {
+          "queueKey": "PLT-API",
+          "name": "API Gateway",
+          "tribeSlug": "plt-run",
+          "description": "Public API gateway, rate limiting and API key management.",
+          "icon": "code",
+          "hue": null,
+          "apps": [
+            "Gateway",
+            "API Keys Portal"
+          ],
+          "keywords": [
+            "rate limit",
+            "api key",
+            "429",
+            "gateway timeout"
+          ],
+          "channel": "#api-gateway",
+          "lead": null,
+          "oncall": "gateway-oncall"
+        },
+        {
+          "queueKey": "PLT-CI",
+          "name": "CI/CD",
+          "tribeSlug": "plt-dx",
+          "description": "Build pipelines, deploy automation and rollback tooling.",
+          "icon": "zap",
+          "hue": null,
+          "apps": [
+            "Pipelines",
+            "Deployer"
+          ],
+          "keywords": [
+            "deploy failed",
+            "pipeline stuck",
+            "rollback",
+            "build error"
+          ],
+          "channel": "#ci-cd",
+          "lead": "Léa Moreau",
+          "oncall": "cicd-oncall"
+        },
+        {
+          "queueKey": "PLT-DEV",
+          "name": "Internal Dev Portal",
+          "tribeSlug": "plt-dx",
+          "description": "Service catalog, scorecards and golden-path templates for engineers.",
+          "icon": "map",
+          "hue": null,
+          "apps": [
+            "DevPortal"
+          ],
+          "keywords": [
+            "service catalog",
+            "scaffold",
+            "template"
+          ],
+          "channel": "#dev-portal",
+          "lead": "Tamás Balogh",
+          "oncall": null
+        },
+        {
+          "queueKey": "PLT-BLD",
+          "name": "Build Tooling",
+          "tribeSlug": "plt-dx",
+          "description": "Monorepo build system, caching and dependency management.",
+          "icon": "settings",
+          "hue": null,
+          "apps": [
+            "BuildCache"
+          ],
+          "keywords": [
+            "monorepo",
+            "slow build",
+            "dependency"
+          ],
+          "channel": null,
+          "lead": "Jasper Willems",
+          "oncall": null
+        },
+        {
+          "queueKey": "PLT-TST",
+          "name": "Test Infrastructure",
+          "tribeSlug": "plt-dx",
+          "description": "Test runners, flaky test detection and preview environments.",
+          "icon": "bug",
+          "hue": null,
+          "apps": [
+            "TestGrid",
+            "Preview Envs"
+          ],
+          "keywords": [
+            "flaky test",
+            "preview environment",
+            "e2e"
+          ],
+          "channel": "#test-infra",
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "PLT-OBS",
+          "name": "Observability",
+          "tribeSlug": "plt-rel",
+          "description": "Metrics, logging, tracing and dashboards platform.",
+          "icon": "eye",
+          "hue": null,
+          "apps": [
+            "Metrics Stack",
+            "LogSearch"
+          ],
+          "keywords": [
+            "missing logs",
+            "dashboard",
+            "alert rule",
+            "tracing"
+          ],
+          "channel": "#observability",
+          "lead": "Chloé Bernard",
+          "oncall": "obs-oncall"
+        },
+        {
+          "queueKey": "PLT-INC",
+          "name": "Incident Tooling",
+          "tribeSlug": "plt-rel",
+          "description": "Incident management bot, status page and postmortem tooling.",
+          "icon": "bell",
+          "hue": null,
+          "apps": [
+            "IncidentBot",
+            "StatusPage"
+          ],
+          "keywords": [
+            "incident",
+            "status page",
+            "postmortem",
+            "page down"
+          ],
+          "channel": "#incident-tooling",
+          "lead": null,
+          "oncall": "incident-oncall"
+        },
+        {
+          "queueKey": "PLT-CHA",
+          "name": "Chaos & Resilience",
+          "tribeSlug": "plt-rel",
+          "description": "Fault injection, load testing and disaster recovery drills.",
+          "icon": "zap",
+          "hue": null,
+          "apps": [
+            "ChaosKit"
+          ],
+          "keywords": [
+            "load test",
+            "failover",
+            "dr drill"
+          ],
+          "channel": null,
+          "lead": "Milan Kovac",
+          "oncall": null
+        },
+        {
+          "queueKey": "PLT-CAP",
+          "name": "Capacity & Cost",
+          "tribeSlug": "plt-rel",
+          "description": "Cloud cost reporting, budgets and capacity forecasting.",
+          "icon": "chart",
+          "hue": null,
+          "apps": [
+            "CostBoard"
+          ],
+          "keywords": [
+            "cloud cost",
+            "budget alert",
+            "capacity planning"
+          ],
+          "channel": "#finops",
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "PLT-SEC",
+          "name": "AppSec",
+          "tribeSlug": "plt-sec",
+          "description": "Security reviews, dependency scanning and vulnerability triage.",
+          "icon": "shield",
+          "hue": null,
+          "apps": [
+            "VulnTracker"
+          ],
+          "keywords": [
+            "vulnerability",
+            "cve",
+            "pentest",
+            "security review"
+          ],
+          "channel": "#appsec",
+          "lead": "Sophie Martin",
+          "oncall": "appsec-oncall"
+        },
+        {
+          "queueKey": "PLT-PKI",
+          "name": "Secrets & PKI",
+          "tribeSlug": "plt-sec",
+          "description": "Secret storage, certificate issuance and rotation.",
+          "icon": "key",
+          "hue": null,
+          "apps": [
+            "Vault",
+            "CertIssuer"
+          ],
+          "keywords": [
+            "certificate expired",
+            "secret rotation",
+            "tls cert"
+          ],
+          "channel": "#secrets-pki",
+          "lead": null,
+          "oncall": "pki-oncall"
+        },
+        {
+          "queueKey": "PLT-IAM",
+          "name": "IAM Platform",
+          "tribeSlug": "plt-sec",
+          "description": "Workforce SSO, customer auth tokens and permission model.",
+          "icon": "lock",
+          "hue": null,
+          "apps": [
+            "SSO Broker",
+            "AuthZ Core"
+          ],
+          "keywords": [
+            "sso",
+            "password reset",
+            "permissions",
+            "access denied",
+            "mfa"
+          ],
+          "channel": "#iam",
+          "lead": "Marton Fehér",
+          "oncall": "iam-oncall"
+        },
+        {
+          "queueKey": "OPS-IT",
+          "name": "Workplace IT",
+          "tribeSlug": "ops-et",
+          "description": "Employee helpdesk, accounts, wifi, printers and office AV.",
+          "icon": "headset",
+          "hue": 210,
+          "apps": [
+            "IT Helpdesk"
+          ],
+          "keywords": [
+            "laptop broken",
+            "wifi",
+            "printer",
+            "new starter account",
+            "vpn"
+          ],
+          "channel": "#it-helpdesk",
+          "lead": "Katalin Papp",
+          "oncall": "it-oncall"
+        },
+        {
+          "queueKey": "OPS-COL",
+          "name": "Collaboration Tools",
+          "tribeSlug": "ops-et",
+          "description": "Slack, Confluence, Jira and Google Workspace administration.",
+          "icon": "users",
+          "hue": null,
+          "apps": [
+            "Jira",
+            "Confluence",
+            "Slack Admin"
+          ],
+          "keywords": [
+            "jira access",
+            "confluence permission",
+            "slack channel",
+            "workspace"
+          ],
+          "channel": "#collab-tools",
+          "lead": "Ruben Mertens",
+          "oncall": null
+        },
+        {
+          "queueKey": "OPS-DEV",
+          "name": "Device Management",
+          "tribeSlug": "ops-et",
+          "description": "Laptop fleet, MDM policies and OS patching.",
+          "icon": "phone",
+          "hue": null,
+          "apps": [
+            "MDM Console"
+          ],
+          "keywords": [
+            "mdm",
+            "os update",
+            "disk encryption"
+          ],
+          "channel": "#device-mgmt",
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "OPS-FAC",
+          "name": "Facilities Tech",
+          "tribeSlug": "ops-et",
+          "description": "Badge access, meeting room systems and office sensors.",
+          "icon": "key",
+          "hue": null,
+          "apps": [
+            "BadgeSys"
+          ],
+          "keywords": [
+            "badge not working",
+            "meeting room",
+            "desk booking"
+          ],
+          "channel": null,
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "OPS-ERP",
+          "name": "ERP & Finance Systems",
+          "tribeSlug": "ops-bs",
+          "description": "General ledger ERP, expense tool and month-close automations.",
+          "icon": "bank",
+          "hue": null,
+          "apps": [
+            "NetSuite",
+            "ExpenseApp"
+          ],
+          "keywords": [
+            "expense report",
+            "erp",
+            "gl code",
+            "purchase order"
+          ],
+          "channel": "#finance-systems",
+          "lead": "Vera Lakatos",
+          "oncall": null
+        },
+        {
+          "queueKey": "OPS-HRS",
+          "name": "HR Systems",
+          "tribeSlug": "ops-bs",
+          "description": "HRIS, recruiting ATS and payroll integrations.",
+          "icon": "users",
+          "hue": null,
+          "apps": [
+            "HRIS",
+            "ATS"
+          ],
+          "keywords": [
+            "payslip",
+            "time off",
+            "onboarding new hire",
+            "ats"
+          ],
+          "channel": "#hr-systems",
+          "lead": "Claire Fontaine",
+          "oncall": null
+        },
+        {
+          "queueKey": "OPS-PRC",
+          "name": "Procurement Tech",
+          "tribeSlug": "ops-bs",
+          "description": "Vendor onboarding, contracts workflow and purchasing approvals.",
+          "icon": "cart",
+          "hue": null,
+          "apps": [
+            "ProcureFlow"
+          ],
+          "keywords": [
+            "vendor",
+            "contract approval",
+            "purchasing"
+          ],
+          "channel": null,
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "OPS-CRM",
+          "name": "CRM Admin",
+          "tribeSlug": "ops-bs",
+          "description": "Salesforce configuration, sales pipelines and quota tooling.",
+          "icon": "cloud",
+          "hue": null,
+          "apps": [
+            "Salesforce"
+          ],
+          "keywords": [
+            "salesforce",
+            "opportunity",
+            "lead routing"
+          ],
+          "channel": "#crm-admin",
+          "lead": "Pieter Claes",
+          "oncall": null
+        },
+        {
+          "queueKey": "OPS-LGL",
+          "name": "Legal Tech",
+          "tribeSlug": "ops-bs",
+          "description": "Contract lifecycle tooling and e-signature administration.",
+          "icon": "doc",
+          "hue": null,
+          "apps": [
+            "CLM",
+            "eSign"
+          ],
+          "keywords": [
+            "nda",
+            "e-signature",
+            "contract template"
+          ],
+          "channel": null,
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "OPS-TKT",
+          "name": "Ticketing Platform",
+          "tribeSlug": "ops-st",
+          "description": "The internal ticketing system itself: queues, forms and routing rules.",
+          "icon": "receipt",
+          "hue": null,
+          "apps": [
+            "TicketDesk"
+          ],
+          "keywords": [
+            "ticket routing",
+            "queue setup",
+            "form field",
+            "sla config"
+          ],
+          "channel": "#ticketing-platform",
+          "lead": "Orsolya Kiss",
+          "oncall": "ticketing-oncall"
+        },
+        {
+          "queueKey": "OPS-KB",
+          "name": "Knowledge Base",
+          "tribeSlug": "ops-st",
+          "description": "Internal and customer help-center content platform.",
+          "icon": "doc",
+          "hue": null,
+          "apps": [
+            "HelpCenter"
+          ],
+          "keywords": [
+            "help article",
+            "faq",
+            "kb"
+          ],
+          "channel": "#knowledge-base",
+          "lead": null,
+          "oncall": null
+        },
+        {
+          "queueKey": "OPS-CCT",
+          "name": "Contact Center Tech",
+          "tribeSlug": "ops-st",
+          "description": "Support telephony, chat widget and agent workspace.",
+          "icon": "headset",
+          "hue": null,
+          "apps": [
+            "AgentDesk",
+            "Chat Widget"
+          ],
+          "keywords": [
+            "call center",
+            "support chat",
+            "ivr",
+            "agent tools"
+          ],
+          "channel": "#contact-center",
+          "lead": "Amélie Rousseau",
+          "oncall": "cct-oncall"
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "source": "PAY-CHK",
+      "target": "DATA-FRM",
+      "reason": "fraud scoring at checkout"
+    },
+    {
+      "source": "PAY-CHK",
+      "target": "PAY-RTE",
+      "reason": "routing decisions"
+    },
+    {
+      "source": "PAY-CRD",
+      "target": "PAY-REC",
+      "reason": "processor reports"
+    },
+    {
+      "source": "PAY-OUT",
+      "target": "PAY-TRS",
+      "reason": "ledger postings"
+    },
+    {
+      "source": "PAY-SUB",
+      "target": "PAY-INV",
+      "reason": "invoice on renewal"
+    },
+    {
+      "source": "PAY-DUN",
+      "target": "CG-NTF",
+      "reason": "dunning emails"
+    },
+    {
+      "source": "PAY-INV",
+      "target": "PAY-TAX",
+      "reason": "tax lines"
+    },
+    {
+      "source": "CG-IDO",
+      "target": "PLT-IAM",
+      "reason": "auth tokens"
+    },
+    {
+      "source": "CG-IDO",
+      "target": "CG-KYC",
+      "reason": "verification handoff"
+    },
+    {
+      "source": "CG-KYC",
+      "target": "RISK-SAN",
+      "reason": "screening at onboarding"
+    },
+    {
+      "source": "CG-NTF",
+      "target": "OPS-CCT",
+      "reason": "support alert routing"
+    },
+    {
+      "source": "CG-CRM",
+      "target": "CG-NTF",
+      "reason": "campaign sends"
+    },
+    {
+      "source": "CG-PRS",
+      "target": "DATA-REC",
+      "reason": "reco models"
+    },
+    {
+      "source": "CG-ACT",
+      "target": "DATA-EXP",
+      "reason": "journey experiments"
+    },
+    {
+      "source": "DATA-FRM",
+      "target": "RISK-FRO",
+      "reason": "cases from model flags"
+    },
+    {
+      "source": "RISK-ACS",
+      "target": "PLT-IAM",
+      "reason": "lockout signals"
+    },
+    {
+      "source": "RISK-DIS",
+      "target": "PAY-CRD",
+      "reason": "chargeback data"
+    },
+    {
+      "source": "RISK-PRV",
+      "target": "DATA-CAT",
+      "reason": "retention policies"
+    },
+    {
+      "source": "DATA-ING",
+      "target": "DATA-DQ",
+      "reason": "quality gates"
+    },
+    {
+      "source": "DATA-BI",
+      "target": "DATA-LKE",
+      "reason": "warehouse tables"
+    },
+    {
+      "source": "DATA-MLP",
+      "target": "PLT-K8S",
+      "reason": "training clusters"
+    },
+    {
+      "source": "DATA-SRC",
+      "target": "CG-PRS",
+      "reason": "ranked results"
+    },
+    {
+      "source": "PLT-CI",
+      "target": "PLT-K8S",
+      "reason": "deploy targets"
+    },
+    {
+      "source": "PLT-OBS",
+      "target": "PLT-INC",
+      "reason": "alerts to incidents"
+    },
+    {
+      "source": "PLT-API",
+      "target": "PLT-MSH",
+      "reason": "traffic policies"
+    },
+    {
+      "source": "PLT-PKI",
+      "target": "PLT-EDG",
+      "reason": "edge certificates"
+    },
+    {
+      "source": "OPS-TKT",
+      "target": "OPS-COL",
+      "reason": "jira sync"
+    },
+    {
+      "source": "OPS-CCT",
+      "target": "OPS-KB",
+      "reason": "agent answers"
+    },
+    {
+      "source": "OPS-ERP",
+      "target": "PAY-TRS",
+      "reason": "gl reconciliation"
+    },
+    {
+      "source": "RISK-REG",
+      "target": "PAY-TRS",
+      "reason": "liquidity reports"
+    }
+  ]
+}

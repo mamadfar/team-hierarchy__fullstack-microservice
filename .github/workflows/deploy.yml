@@ -1,0 +1,133 @@
+# ============================================================================
+# Deploy — build + push images to GHCR, then a placeholder deploy step that
+# shows where runtime secrets are injected.
+#
+# Gated by the "production" GitHub environment (repo Settings -> Environments):
+# add required reviewers there to require approval before any deploy runs.
+#
+# NO secret is ever baked into an image. All secrets are injected into the
+# runtime environment at deploy time from GitHub Actions secrets — see
+# docs/CONFLUENCE_SETUP.md §6 for the one-time `gh secret set` commands.
+# ============================================================================
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  build-and-push:
+    name: Build & push (${{ matrix.app }})
+    runs-on: ubuntu-latest
+    environment: production
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: web
+            dockerfile: infra/docker/web.Dockerfile
+            # NEXT_PUBLIC_* values are PUBLIC (inlined into the browser bundle)
+            # — configure per environment via repo/environment *variables*
+            # (Settings -> Secrets and variables -> Actions -> Variables),
+            # never via secrets.
+            build_args: |
+              NEXT_PUBLIC_REGISTRY_API_URL=${{ vars.NEXT_PUBLIC_REGISTRY_API_URL || 'http://localhost:4001' }}
+              NEXT_PUBLIC_ASSISTANT_API_URL=${{ vars.NEXT_PUBLIC_ASSISTANT_API_URL || 'http://localhost:4002' }}
+          - app: registry-service
+            dockerfile: infra/docker/registry-service.Dockerfile
+            build_args: ""
+          - app: assistant-service
+            dockerfile: infra/docker/assistant-service.Dockerfile
+            build_args: ""
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # GHCR requires a lowercase image path
+      - name: Compute image name
+        id: image
+        run: echo "name=ghcr.io/${GITHUB_REPOSITORY,,}/${{ matrix.app }}" >> "$GITHUB_OUTPUT"
+
+      - name: Docker metadata (tags sha + latest)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.image.outputs.name }}
+          tags: |
+            type=sha
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: ${{ matrix.build_args }}
+          cache-from: type=gha,scope=deploy-${{ matrix.app }}
+          cache-to: type=gha,mode=max,scope=deploy-${{ matrix.app }}
+
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    environment: production
+    steps:
+      # --------------------------------------------------------------------
+      # PLACEHOLDER deploy step.
+      #
+      # Replace the `run` block with your real delivery mechanism, e.g.:
+      #   - ssh:   ssh deploy@host 'docker compose pull && docker compose up -d'
+      #   - helm:  helm upgrade orbit ./chart --set image.tag=sha-${GITHUB_SHA}
+      #   - k8s:   kubectl set image deploy/registry registry=$IMAGE ...
+      #
+      # The `env` block below is the contract: these values are injected into
+      # the services' RUNTIME environment on the target host — they are never
+      # present at image build time. Set them once per docs/CONFLUENCE_SETUP.md §6:
+      #   gh secret set CONFLUENCE_BASE_URL   --body "https://<org>.atlassian.net/wiki"
+      #   gh secret set CONFLUENCE_EMAIL      --body "svc-orbit@company.com"
+      #   gh secret set CONFLUENCE_API_TOKEN  --body "<token>"
+      #   gh secret set CONFLUENCE_PAGE_IDS   --body "84213977,84214102,84214255"
+      #   gh secret set ANTHROPIC_API_KEY     --body "<key>"
+      #   gh secret set DATABASE_URL          --body "postgres://user:pass@host:5432/orbit"
+      #   gh secret set REDIS_URL             --body "redis://host:6379"
+      #   gh secret set SYNC_APP_TOKEN        --body "<long random token>"
+      # --------------------------------------------------------------------
+      - name: Deploy (placeholder — wire your ssh/helm/kubectl step here)
+        env:
+          IMAGE_TAG: sha-${{ github.sha }}
+          CONFLUENCE_BASE_URL: ${{ secrets.CONFLUENCE_BASE_URL }}
+          CONFLUENCE_EMAIL: ${{ secrets.CONFLUENCE_EMAIL }}
+          CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
+          CONFLUENCE_PAGE_IDS: ${{ secrets.CONFLUENCE_PAGE_IDS }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          REDIS_URL: ${{ secrets.REDIS_URL }}
+          SYNC_APP_TOKEN: ${{ secrets.SYNC_APP_TOKEN }}
+        run: |
+          echo "Images pushed to GHCR for commit ${GITHUB_SHA}."
+          echo "Runtime env prepared (values masked by GitHub Actions):"
+          echo "  CONFLUENCE_BASE_URL, CONFLUENCE_EMAIL, CONFLUENCE_API_TOKEN, CONFLUENCE_PAGE_IDS"
+          echo "  ANTHROPIC_API_KEY, DATABASE_URL, REDIS_URL, SYNC_APP_TOKEN"
+          echo ""
+          echo "Replace this step with the real delivery command (ssh / helm / kubectl)."
+          echo "The env block above must be forwarded to the service containers at runtime."

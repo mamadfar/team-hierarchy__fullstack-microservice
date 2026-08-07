@@ -1,0 +1,270 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------ */
+/* Design tokens — lifted verbatim from the prototype .dc.html style  */
+/* block, plus shadcn-style aliases mapped onto them for both themes. */
+/* ------------------------------------------------------------------ */
+
+:root {
+  --bg: #f6f7f8;
+  --surface: #ffffff;
+  --surface2: #eef4fb;
+  --ice: #e0f2ff;
+  --border: #dbe4ee;
+  --border-soft: #e8eef5;
+  --text: #123a66;
+  --muted: #7d97ba;
+  --primary: #3880ff;
+  --accent: #3880ff;
+  --accent-hover: #2b64c9;
+  --accent-fg: #ffffff;
+  --deep: #0f3d99;
+  --accent-soft: rgba(56, 128, 255, 0.1);
+  --ring: rgba(56, 128, 255, 0.24);
+  --edge: #b9cbe2;
+  --card-shadow: 0 1px 2px rgba(18, 58, 102, 0.07);
+
+  /* shadcn-style aliases */
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card: var(--surface);
+  --card-foreground: var(--text);
+  --popover: var(--surface);
+  --popover-foreground: var(--text);
+  --primary-foreground: var(--accent-fg);
+  --secondary: var(--surface2);
+  --secondary-foreground: var(--text);
+  --muted-foreground: var(--muted);
+  --accent-foreground: var(--accent-fg);
+  --destructive: #d64545;
+  --input: var(--border);
+}
+
+.dark {
+  --bg: #0b1626;
+  --surface: #0f1e34;
+  --surface2: #123152;
+  --ice: #123152;
+  --border: #1f3956;
+  --border-soft: #182c47;
+  --text: #dbeafe;
+  --muted: #7d97ba;
+  --primary: #3880ff;
+  --accent: #6ba3ff;
+  --accent-hover: #5a8fe8;
+  --accent-fg: #0b1626;
+  --deep: #2b64c9;
+  --accent-soft: rgba(107, 163, 255, 0.16);
+  --ring: rgba(107, 163, 255, 0.3);
+  --edge: #3a5578;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+
+  --destructive: #e05b5b;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface2: var(--surface2);
+  --color-ice: var(--ice);
+  --color-border: var(--border);
+  --color-border-soft: var(--border-soft);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-deep: var(--deep);
+  --color-accent-soft: var(--accent-soft);
+  --color-edge: var(--edge);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sora: var(--font-sora-next), 'Sora', sans-serif;
+  --font-sans: var(--font-source-next), 'Source Sans 3', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+  color: inherit;
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* Accessible focus rings driven by --ring */
+:where(button, [role='menuitem'], [role='tab'], a, input):focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+@keyframes ofspin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes oftype {
+  0%,
+  80%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+@keyframes ofup {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.anim-ofup {
+  animation: ofup 0.18s ease;
+}
+.anim-ofup-fast {
+  animation: ofup 0.15s ease;
+}
+.anim-ofup-menu {
+  animation: ofup 0.12s ease;
+}
+.anim-spin-orbit {
+  animation: ofspin 0.8s linear infinite;
+}
+
+/* Hover helpers mirroring the prototype's style-hover rules */
+.hov-surface2:hover {
+  background: var(--surface2);
+}
+.hov-row:hover {
+  background: var(--surface2);
+}
+.hov-icon-btn:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+.hov-accent-line:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.hov-accent-bg:hover {
+  background: var(--accent-hover);
+}
+.orbit-fab {
+  transition: transform 0.15s, background 0.15s;
+}
+.orbit-fab:hover {
+  transform: scale(1.04);
+  background: var(--accent-hover);
+}
+.chip-starter:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.focus-ring-input {
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.focus-ring-input:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px var(--ring);
+  outline: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* React Flow chrome — same overrides as the prototype                */
+/* ------------------------------------------------------------------ */
+.react-flow__node {
+  cursor: pointer;
+}
+.react-flow__node-domainBox,
+.react-flow__node-tribeLabel,
+.react-flow__node-companyLabel {
+  pointer-events: none !important;
+  cursor: default;
+}
+.react-flow__controls {
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.react-flow__controls-button {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.react-flow__controls-button svg {
+  fill: var(--text);
+}
+.react-flow__controls-button:hover {
+  background: var(--surface2);
+}
+.react-flow__minimap {
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.react-flow__attribution {
+  background: transparent;
+}
+.react-flow__attribution a {
+  color: var(--muted);
+  opacity: 0.7;
+}

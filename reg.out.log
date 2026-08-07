@@ -1,0 +1,22 @@
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [NestFactory] Starting Nest application...
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [InstanceLoader] ConfigModule dependencies initialized +12ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [InstanceLoader] ThrottlerModule dependencies initialized +2ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [InstanceLoader] AppModule dependencies initialized +0ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [InstanceLoader] DiscoveryModule dependencies initialized +0ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [InstanceLoader] ConfluenceModule dependencies initialized +1ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [InstanceLoader] DatabaseModule dependencies initialized +0ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [InstanceLoader] RedisModule dependencies initialized +1ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [InstanceLoader] ScheduleModule dependencies initialized +0ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [InstanceLoader] RegistryModule dependencies initialized +1ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [InstanceLoader] SyncModule dependencies initialized +0ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [RoutesResolver] RegistryController {/}: +11ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [RouterExplorer] Mapped {/registry, GET} route +2ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [RouterExplorer] Mapped {/teams/:queueKey, GET} route +1ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [RouterExplorer] Mapped {/sync/runs, GET} route +0ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [RouterExplorer] Mapped {/health, GET} route +0ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [RoutesResolver] SyncController {/sync}: +0ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [RouterExplorer] Mapped {/sync, POST} route +1ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [Migrator] Migrations applied (11 statements, idempotent)
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [SyncService] Sync #1 (boot) ok: 81 teams / 3 companies / 30 links
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [NestApplication] Nest application successfully started +1ms
+[Nest] 62264  - 08/07/2026, 8:28:40 PM     LOG [Bootstrap] registry-service listening on :4001 (docs at /docs)

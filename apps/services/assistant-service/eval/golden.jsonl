@@ -1,0 +1,77 @@
+{"q": "A shopper says the Apple Pay button never shows up on the payment page", "expect": ["PAY-CHK"]}
+{"q": "Card payments keep getting declined by the acquirer since this morning", "expect": ["PAY-CRD"]}
+{"q": "iDEAL and Bancontact payments are failing for customers in the Netherlands", "expect": ["PAY-APM"]}
+{"q": "The card terminal in our Antwerp store went offline and won't take payments", "expect": ["PAY-POS"]}
+{"q": "A merchant says yesterday's payout never arrived on their bank account", "expect": ["PAY-OUT"]}
+{"q": "The internal ledger shows a balance mismatch on one merchant account", "expect": ["PAY-TRS", "PAY-REC"]}
+{"q": "The exchange rate applied to a cross-border settlement looks wrong", "expect": ["PAY-FXS"]}
+{"q": "Transactions from the processor report are missing during reconciliation", "expect": ["PAY-REC"]}
+{"q": "A customer wants to upgrade their subscription plan while still on trial", "expect": ["PAY-SUB"]}
+{"q": "Customer got a wrong invoice and is asking for a credit note", "expect": ["PAY-INV"]}
+{"q": "Dunning emails keep going out for an account that already paid its overdue balance", "expect": ["PAY-DUN"]}
+{"q": "The VAT rate on Hungarian invoices is calculated wrong", "expect": ["PAY-TAX", "PAY-INV"]}
+{"q": "We received a chargeback and need to submit dispute evidence before the deadline", "expect": ["RISK-DIS"]}
+{"q": "A user emailed asking us to delete all their data under GDPR", "expect": ["RISK-PRV"]}
+{"q": "Customer locked out after several suspicious login attempts, looks like an account takeover", "expect": ["RISK-ACS"]}
+{"q": "A payment got flagged against a sanctions watchlist during screening", "expect": ["RISK-SAN"]}
+{"q": "Fraud analysts cannot open cases in the manual review queue", "expect": ["RISK-FRO"]}
+{"q": "Who prepares the PSD2 filing for the regulator this quarter?", "expect": ["RISK-REG"]}
+{"q": "The auditor is asking for SOC2 evidence from our controls testing", "expect": ["RISK-AUD"]}
+{"q": "Our new credit scoring model needs validation and approval before go-live", "expect": ["RISK-MRG"]}
+{"q": "Bots are scraping our prices and the captcha is not stopping them", "expect": ["RISK-BOT"]}
+{"q": "Someone reported abusive content on a user profile, where does moderation happen?", "expect": ["RISK-MOD"]}
+{"q": "Our blog dropped out of Google results and the meta tags look broken", "expect": ["CG-SEO"]}
+{"q": "Conversion pixel and utm attribution numbers do not match the ad platform", "expect": ["CG-PMT"]}
+{"q": "A promo code from the referral campaign errors out at signup", "expect": ["CG-REF"]}
+{"q": "Deep links from the app store listing open the wrong screen", "expect": ["CG-MOB"]}
+{"q": "New users cannot log in right after finishing registration", "expect": ["CG-IDO", "PLT-IAM"]}
+{"q": "ID verification gets stuck at the selfie check during onboarding", "expect": ["CG-KYC"]}
+{"q": "SMS codes for phone verification are not arriving, customers wait for the otp forever", "expect": ["CG-ADR", "CG-NTF"]}
+{"q": "The first-run product tour never shows for newly activated accounts", "expect": ["CG-ACT"]}
+{"q": "Customers are not receiving our emails and push notifications since the release", "expect": ["CG-NTF"]}
+{"q": "Loyalty points went missing after a rewards redemption", "expect": ["CG-LOY"]}
+{"q": "Marketing wants an audience export for the next newsletter campaign", "expect": ["CG-CRM"]}
+{"q": "The in-app announcement banner will not dismiss on mobile", "expect": ["CG-IAM2"]}
+{"q": "Home feed personalization is targeting the wrong audience segments", "expect": ["CG-PRS"]}
+{"q": "The nightly cdc pipeline failed and the data landed late again", "expect": ["DATA-ING"]}
+{"q": "A warehouse table is missing from the lakehouse and spark jobs fail", "expect": ["DATA-LKE"]}
+{"q": "Kafka consumer lag is growing on the orders topic", "expect": ["DATA-STR"]}
+{"q": "Who owns this dataset and how do I request access to it?", "expect": ["DATA-CAT"]}
+{"q": "Numbers on the exec dashboard look broken since yesterday's load", "expect": ["DATA-DQ", "DATA-BI"]}
+{"q": "Assignment in our ab test looks biased and the experiment stats seem off", "expect": ["DATA-EXP"]}
+{"q": "Events from the tracking SDK are not showing up in the funnel", "expect": ["DATA-PA"]}
+{"q": "We need a demand forecast for next quarter's planning", "expect": ["DATA-FC"]}
+{"q": "Model deploy to the feature store keeps failing on the gpu nodes", "expect": ["DATA-MLP"]}
+{"q": "Product recommendations show completely irrelevant items after the ranking change", "expect": ["DATA-REC"]}
+{"q": "The fraud score threshold produces too many false positives", "expect": ["DATA-FRM"]}
+{"q": "I want to build an ai feature, which team runs the llm gateway?", "expect": ["DATA-GEN"]}
+{"q": "Search returns no results when the product name has a typo", "expect": ["DATA-SRC"]}
+{"q": "My pod keeps crashing with oom errors in the staging cluster", "expect": ["PLT-K8S"]}
+{"q": "mtls between two services fails and calls time out through the mesh", "expect": ["PLT-MSH"]}
+{"q": "Autoscaling will not add vm capacity during the evening peak", "expect": ["PLT-CMP"]}
+{"q": "We need a cdn cache purge and the waf blocked a legitimate request", "expect": ["PLT-EDG"]}
+{"q": "Postgres replica lag is high and we need a backup restored", "expect": ["PLT-DBP"]}
+{"q": "Partners are hitting 429 rate limit errors on the public api gateway", "expect": ["PLT-API"]}
+{"q": "The deploy failed halfway and the pipeline is stuck, we need a rollback", "expect": ["PLT-CI"]}
+{"q": "Where do I scaffold a new service from a golden-path template?", "expect": ["PLT-DEV"]}
+{"q": "Monorepo builds got slow and the dependency cache always misses", "expect": ["PLT-BLD"]}
+{"q": "The e2e suite is flaky and preview environments will not spin up", "expect": ["PLT-TST"]}
+{"q": "Logs are missing from tracing for the payments service dashboards", "expect": ["PLT-OBS"]}
+{"q": "The status page is down and the incident bot is not paging anyone", "expect": ["PLT-INC"]}
+{"q": "We want a load test and a failover drill before the peak season", "expect": ["PLT-CHA"]}
+{"q": "Cloud cost spiked this month and we got a budget alert", "expect": ["PLT-CAP"]}
+{"q": "The pentest report lists a critical cve in one of our dependencies", "expect": ["PLT-SEC"]}
+{"q": "A tls certificate expired in production and secret rotation is overdue", "expect": ["PLT-PKI"]}
+{"q": "SSO password reset loops forever and mfa says access denied", "expect": ["PLT-IAM"]}
+{"q": "The wifi in the office is down and the printer will not connect", "expect": ["OPS-IT"]}
+{"q": "A contractor needs jira access and admin on a slack channel", "expect": ["OPS-COL"]}
+{"q": "MDM flags my laptop because disk encryption and the os update are out of date", "expect": ["OPS-DEV"]}
+{"q": "My badge is not working and the meeting room screen is dead", "expect": ["OPS-FAC"]}
+{"q": "My expense report is stuck and the purchase order has the wrong gl code", "expect": ["OPS-ERP"]}
+{"q": "My payslip looks wrong and I cannot request time off in the HR portal", "expect": ["OPS-HRS"]}
+{"q": "A new vendor is waiting on contract approval in purchasing", "expect": ["OPS-PRC", "OPS-LGL"]}
+{"q": "Salesforce lead routing sends opportunities to the wrong owner", "expect": ["OPS-CRM"]}
+{"q": "We need an nda template with e-signature for a partner", "expect": ["OPS-LGL"]}
+{"q": "Ticket routing rules keep sending tickets to the wrong queue", "expect": ["OPS-TKT"]}
+{"q": "The help article in the customer faq is outdated", "expect": ["OPS-KB"]}
+{"q": "The support chat widget and the ivr are down for agents", "expect": ["OPS-CCT"]}

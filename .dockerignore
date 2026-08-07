@@ -1,0 +1,17 @@
+node_modules
+**/node_modules
+dist
+**/dist
+.next
+**/.next
+coverage
+**/coverage
+.git
+.env
+.env.*
+orbit
+plans
+playwright-report
+test-results
+*.md
+!README.md
