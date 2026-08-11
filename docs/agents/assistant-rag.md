@@ -14,7 +14,7 @@ Architecture: [.doc/features/assistant.md](../../.doc/features/assistant.md) + [
 - The vector leg is best-effort (degrades to BM25-only when embeddings aren't written yet); keep that try/catch.
 
 ## Embeddings
-Factory (`embeddings/embeddings.factory.ts`): `mock` (deterministic hashed n-grams, offline default — dev/CI must never need a key) | `voyage` | `openai`; model/key from env. Embeddings are written to `team_documents.embedding` on boot and on `orbit:sync:completed`. If you add a provider: wire it through the LangChain `Embeddings` interface and extend the env enum + `.env.example`.
+Factory (`embeddings/embeddings.factory.ts`): `mock` (deterministic hashed n-grams, offline default — dev/CI must never need a key) | `gemini` (`gemini-embedding-001`, truncated+normalized to 1536 to match `vector(1536)`); model/key from env (`GEMINI_API_KEY`). Embeddings are written to `team_documents.embedding` on boot and on `orbit:sync:completed`. If you add a provider: wire it through the LangChain `Embeddings` interface and extend the env enum + `.env.example`.
 
 ## Logging & privacy
 Log per chat: question, rewritten query, retrieved keys, answered keys — never add user identifiers or headers to these logs.

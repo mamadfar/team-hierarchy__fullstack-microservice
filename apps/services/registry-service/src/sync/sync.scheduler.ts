@@ -20,8 +20,10 @@ export class SyncScheduler implements OnModuleInit {
   ) {}
 
   onModuleInit(): void {
+    // Docker Compose env-files do not strip inline `#` comments; an empty
+    // `SYNC_CRON=  # note` becomes a non-empty string and would crash boot.
     const expression = this.env.SYNC_CRON?.trim();
-    if (!expression) return;
+    if (!expression || expression.startsWith('#')) return;
 
     let job: CronJob;
     try {

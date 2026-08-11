@@ -13,25 +13,25 @@ export const EnvSchema = z
   .object({
     DATABASE_URL: z.string().min(1, 'DATABASE_URL is required (postgres connection string)'),
     REDIS_URL: z.string().min(1, 'REDIS_URL is required (redis connection string)'),
-    /** Optional on purpose: the service must boot (and answer via the deterministic fallback) without it. */
-    ANTHROPIC_API_KEY: optionalString,
-    LLM_MODEL: z.string().min(1).default('claude-haiku-4-5'),
-    EMBEDDING_PROVIDER: z.enum(['mock', 'voyage', 'openai']).default('mock'),
-    EMBEDDING_MODEL: z.string().min(1).default('voyage-3-lite'),
-    EMBEDDING_API_KEY: optionalString,
+    /** Optional: without it, /chat uses the deterministic extractive fallback. */
+    GEMINI_API_KEY: optionalString,
+    LLM_MODEL: z.string().min(1).default('gemini-3.5-flash-lite'),
+    EMBEDDING_PROVIDER: z.enum(['mock', 'gemini']).default('mock'),
+    EMBEDDING_MODEL: z.string().min(1).default('gemini-embedding-001'),
     ASSISTANT_PORT: z.preprocess(
       (v) => (typeof v === 'string' && v.trim() === '' ? undefined : v),
       z.coerce.number().int().positive().default(4002),
     ),
     WEB_ORIGIN: z.string().min(1).default('http://localhost:3000'),
-    NODE_ENV: z.string().default('development'),
+    NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   })
   .superRefine((env, ctx) => {
-    if (env.EMBEDDING_PROVIDER !== 'mock' && !env.EMBEDDING_API_KEY) {
+    if (env.EMBEDDING_PROVIDER === 'gemini' && !env.GEMINI_API_KEY) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ['EMBEDDING_API_KEY'],
-        message: `EMBEDDING_API_KEY is required when EMBEDDING_PROVIDER="${env.EMBEDDING_PROVIDER}" (only "mock" runs without a key)`,
+        path: ['GEMINI_API_KEY'],
+        message:
+          'GEMINI_API_KEY is required when EMBEDDING_PROVIDER="gemini" (use "mock" for offline)',
       });
     }
   });

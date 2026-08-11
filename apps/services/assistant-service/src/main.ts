@@ -15,17 +15,30 @@ async function bootstrap(): Promise<void> {
   app.enableCors({ origin: env.WEB_ORIGIN, methods: ['GET', 'POST'] });
   app.enableShutdownHooks();
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('Orbit assistant-service')
-    .setDescription('RAG chat API: hybrid BM25 + pgvector retrieval, grounded team-routing answers.')
-    .setVersion('0.1.0')
-    .build();
-  SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, swaggerConfig));
+  if (env.NODE_ENV === 'production') {
+    // One hop (LB / reverse proxy) so throttler sees the real client IP.
+    app.getHttpAdapter().getInstance().set('trust proxy', 1);
+  } else {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('Orbit assistant-service')
+      .setDescription(
+        'RAG chat API: hybrid BM25 + pgvector retrieval, grounded team-routing answers.',
+      )
+      .setVersion('0.2.0')
+      .build();
+    SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, swaggerConfig));
+  }
 
   await app.listen(env.ASSISTANT_PORT);
   new Logger('Bootstrap').log(
-    `assistant-service listening on :${env.ASSISTANT_PORT} (docs at /docs, CORS origin ${env.WEB_ORIGIN})`,
+    `assistant-service listening on :${env.ASSISTANT_PORT}` +
+      (env.NODE_ENV === 'production' ? '' : ' (docs at /docs)') +
+      ` (CORS origin ${env.WEB_ORIGIN})`,
   );
 }
 
-void bootstrap();
+bootstrap().catch((error: unknown) => {
+  console.error('[assistant-service] fatal boot error:');
+  console.error(error instanceof Error ? error.message : error);
+  process.exit(1);
+});

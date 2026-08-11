@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import type Redis from 'ioredis';
+import type { Pool } from 'pg';
 
 import { AppError } from '../common/app-error';
 import { REGISTRY_SNAPSHOT_CACHE_KEY, SYNC_COMPLETED_CHANNEL } from '../common/constants';
@@ -7,6 +8,7 @@ import type { ParsedCompany, ParsedRegistry, SyncStats } from '../common/ingest.
 import { confluencePageIds, ENV, Env } from '../config/env';
 import { ConfluenceClient } from '../confluence/confluence.client';
 import { ConfluencePageParser } from '../confluence/confluence-page.parser';
+import { PG_POOL } from '../database/database.tokens';
 import { REDIS } from '../redis/redis.module';
 import { SeedSource } from './seed-source';
 import { SyncRepository } from './sync.repository';
@@ -17,6 +19,9 @@ export interface SyncResult {
   runId: number;
   stats: SyncStats;
 }
+
+/** Session advisory lock key — distinct from Migrator's xact lock (492839021). */
+const SYNC_ADVISORY_LOCK_KEY = 492839022;
 
 /**
  * Orchestrates one full ingest: source (seed fixture when MOCK_CONFLUENCE,
@@ -32,6 +37,7 @@ export class SyncService implements OnApplicationBootstrap {
 
   constructor(
     @Inject(ENV) private readonly env: Env,
+    @Inject(PG_POOL) private readonly pool: Pool,
     private readonly seedSource: SeedSource,
     private readonly confluenceClient: ConfluenceClient,
     private readonly parser: ConfluencePageParser,
@@ -62,6 +68,27 @@ export class SyncService implements OnApplicationBootstrap {
     }
     this.running = true;
 
+    const lockClient = await this.pool.connect();
+    try {
+      const locked = await lockClient.query<{ ok: boolean }>(
+        'SELECT pg_try_advisory_lock($1) AS ok',
+        [SYNC_ADVISORY_LOCK_KEY],
+      );
+      if (!locked.rows[0]?.ok) {
+        throw new AppError(409, 'A sync is already running');
+      }
+
+      return await this.runLocked(trigger);
+    } finally {
+      await lockClient
+        .query('SELECT pg_advisory_unlock($1)', [SYNC_ADVISORY_LOCK_KEY])
+        .catch(() => undefined);
+      lockClient.release();
+      this.running = false;
+    }
+  }
+
+  private async runLocked(trigger: SyncTrigger): Promise<SyncResult> {
     const stats: SyncStats = {
       trigger,
       pages: 0,
@@ -113,8 +140,6 @@ export class SyncService implements OnApplicationBootstrap {
         );
       this.logger.error(`Sync #${runId} (${trigger}) failed: ${message}`);
       throw error instanceof AppError ? error : new AppError(500, `Sync failed: ${message}`);
-    } finally {
-      this.running = false;
     }
   }
 
@@ -123,7 +148,10 @@ export class SyncService implements OnApplicationBootstrap {
   private async loadFromConfluence(): Promise<ParsedRegistry> {
     const pageIds = confluencePageIds(this.env);
     if (pageIds.length === 0) {
-      throw new AppError(500, 'CONFLUENCE_PAGE_IDS is empty — nothing to sync');
+      throw new AppError(
+        500,
+        'CONFLUENCE_PAGE_IDS is empty — nothing to sync. Set CONFLUENCE_PAGE_IDS in .env to comma-separated page ids from each company page URL (.../pages/<id>/...), and set MOCK_CONFLUENCE=false when using live Confluence.',
+      );
     }
     const parsedCompanies: ParsedCompany[] = [];
     const links: ParsedRegistry['links'] = [];

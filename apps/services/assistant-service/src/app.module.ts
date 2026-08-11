@@ -26,7 +26,7 @@ import { RetrievalModule } from './retrieval/retrieval.module';
     {
       provide: APP_FILTER,
       inject: [ENV],
-      useFactory: (env: Env) => new AllExceptionsFilter(env.NODE_ENV !== 'production'),
+      useFactory: (env: Env) => new AllExceptionsFilter(env.NODE_ENV === 'development'),
     },
   ],
 })

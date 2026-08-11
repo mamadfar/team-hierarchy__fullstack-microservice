@@ -30,14 +30,18 @@ describe('i18n dictionaries (en/hu/fr/nl)', () => {
     for (const dict of Object.values(dictionaries)) {
       expect(dict.syncedMin).toContain('{m}');
       expect(dict.ticketToast).toContain('{k}');
+      expect(dict.chatPlaceholder).toContain('{example}');
+      expect(dict.starterWhoHandles).toContain('{name}');
+      expect(dict.starterAboutKeyword).toContain('{keyword}');
+      expect(dict.starterAboutDomain).toContain('{domain}');
     }
   });
 
-  it('has exactly 3 starter questions per locale', () => {
+  it('has exactly 3 fallback starter questions per locale', () => {
     for (const dict of Object.values(dictionaries)) {
-      expect(Array.isArray(dict.starters)).toBe(true);
-      expect(dict.starters).toHaveLength(3);
-      for (const s of dict.starters) expect(typeof s).toBe('string');
+      expect(Array.isArray(dict.startersFallback)).toBe(true);
+      expect(dict.startersFallback).toHaveLength(3);
+      for (const s of dict.startersFallback) expect(typeof s).toBe('string');
     }
   });
 

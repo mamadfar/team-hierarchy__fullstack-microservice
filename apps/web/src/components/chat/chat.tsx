@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import type { ChatMessage, Locale } from '@orbit/shared';
+import type { ChatMessage, Locale, RegistrySnapshot } from '@orbit/shared';
 import { postChat } from '@/lib/api';
+import { buildChatPlaceholderHint, buildChatStarters } from '@/lib/chat-starters';
 import type { RegistryIndex } from '@/lib/registry';
 import { isLocale } from '@/i18n/locales';
 import { useAppStore } from '@/store/app-store';
@@ -42,7 +43,13 @@ export function ChatFab() {
   );
 }
 
-export function ChatPanel({ index }: { index: RegistryIndex }) {
+export function ChatPanel({
+  index,
+  snapshot,
+}: {
+  index: RegistryIndex;
+  snapshot: RegistrySnapshot;
+}) {
   const t = useTranslations();
   const rawLocale = useLocale();
   const lang: Locale = isLocale(rawLocale) ? rawLocale : 'en';
@@ -54,9 +61,29 @@ export function ChatPanel({ index }: { index: RegistryIndex }) {
   const pushMsg = useAppStore((s) => s.pushMsg);
   const setBusy = useAppStore((s) => s.setBusy);
   const pickFromChat = useAppStore((s) => s.pickFromChat);
+  const applyChatTeams = useAppStore((s) => s.applyChatTeams);
 
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const starters = useMemo(
+    () =>
+      buildChatStarters(
+        snapshot,
+        {
+          whoHandles: (v) => t('starterWhoHandles', v),
+          aboutKeyword: (v) => t('starterAboutKeyword', v),
+          aboutDomain: (v) => t('starterAboutDomain', v),
+        },
+        t.raw('startersFallback') as string[],
+      ),
+    // lang switches messages; snapshot refresh rebuilds chips after sync.
+    [lang, snapshot, t],
+  );
+  const placeholderExample = useMemo(
+    () => buildChatPlaceholderHint(snapshot, t('chatPlaceholderFallback')),
+    [lang, snapshot, t],
+  );
 
   const scrollToEnd = useCallback(() => {
     const el = scrollRef.current;
@@ -74,6 +101,7 @@ export function ChatPanel({ index }: { index: RegistryIndex }) {
       const history = [...state.msgs, { role: 'user' as const, text }];
       pushMsg({ role: 'user', text });
       setInput('');
+      applyChatTeams([]);
       setBusy(true);
       try {
         const payload: ChatMessage[] = history
@@ -84,18 +112,19 @@ export function ChatPanel({ index }: { index: RegistryIndex }) {
           .map((team) => team.queueKey)
           .filter((key) => index.teams.has(key));
         pushMsg({ role: 'assistant', text: res.answer, keys });
+        applyChatTeams(keys);
       } catch {
         pushMsg({ role: 'assistant', text: t('chatError'), keys: [] });
+        applyChatTeams([]);
       } finally {
         setBusy(false);
       }
     },
-    [index, lang, pushMsg, setBusy, t],
+    [applyChatTeams, index, lang, pushMsg, setBusy, t],
   );
 
   if (!chatOpen) return null;
 
-  const starters = t.raw('starters') as string[];
   const showStarters = msgs.length === 0 && !busy;
 
   return (
@@ -113,8 +142,8 @@ export function ChatPanel({ index }: { index: RegistryIndex }) {
         <button
           type="button"
           onClick={toggleChat}
-          aria-label="Close"
-          title="Close"
+          aria-label={t('close')}
+          title={t('close')}
           className="border-none bg-transparent cursor-pointer text-muted p-1 flex"
         >
           <IconClose size={14} />
@@ -225,8 +254,8 @@ export function ChatPanel({ index }: { index: RegistryIndex }) {
               void send(input);
             }
           }}
-          placeholder={t('chatPlaceholder')}
-          aria-label={t('chatPlaceholder')}
+          placeholder={t('chatPlaceholder', { example: placeholderExample })}
+          aria-label={t('chatPlaceholder', { example: placeholderExample })}
           className="flex-1 bg-surface2 rounded-[10px] px-3 py-[9px] min-w-0 h-auto"
         />
         <button

@@ -13,5 +13,6 @@ orbit
 plans
 playwright-report
 test-results
+.tmp-e2e
 *.md
 !README.md

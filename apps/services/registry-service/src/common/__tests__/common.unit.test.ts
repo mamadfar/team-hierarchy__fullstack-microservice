@@ -18,7 +18,9 @@ function makeHost() {
 }
 
 describe('AllExceptionsFilter', () => {
-  const prodFilter = new AllExceptionsFilter(parseEnv({ NODE_ENV: 'production' }));
+  const prodFilter = new AllExceptionsFilter(
+    parseEnv({ NODE_ENV: 'production', MOCK_CONFLUENCE: 'true' }),
+  );
 
   it('AppError -> its status + message, no stack outside development', () => {
     const { host, status, json } = makeHost();

@@ -44,7 +44,19 @@ export class HttpClient {
       (error: unknown) => {
         if (error instanceof AxiosError) {
           const status = error.response?.status ?? 502;
-          return Promise.reject(new HttpError(status, `Upstream request failed (${status})`));
+          const body = error.response?.data;
+          const upstream =
+            body &&
+            typeof body === 'object' &&
+            typeof (body as { message?: unknown }).message === 'string'
+              ? (body as { message: string }).message.trim()
+              : '';
+          // Prefer operational AppError messages (e.g. Confluence 422 structure errors).
+          const message =
+            upstream.length > 0 && upstream.length <= 2000
+              ? upstream
+              : `Upstream request failed (${status})`;
+          return Promise.reject(new HttpError(status, message));
         }
         return Promise.reject(new HttpError(502, 'Upstream request failed'));
       },

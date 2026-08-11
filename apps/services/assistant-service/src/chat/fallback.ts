@@ -2,7 +2,7 @@ import type { ChatResponse, ChatTeamRef, Locale } from '@orbit/shared';
 import type { RetrievedTeam } from '../retrieval/core/hybrid';
 
 /**
- * Deterministic extractive answers used when ANTHROPIC_API_KEY is unset (or
+ * Deterministic extractive answers used when GEMINI_API_KEY is unset (or
  * the LLM call fails): plain-text template in the requested language naming
  * the top-2 retrieved teams. Keeps `make docker-up` fully working offline.
  */

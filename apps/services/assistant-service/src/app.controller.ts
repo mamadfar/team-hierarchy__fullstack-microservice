@@ -16,7 +16,7 @@ class HealthDto {
   @ApiProperty({ example: 'ok' })
   status!: string;
 
-  @ApiProperty({ description: 'true when ANTHROPIC_API_KEY is configured (else fallback answers)' })
+  @ApiProperty({ description: 'true when GEMINI_API_KEY is configured (else fallback answers)' })
   llm!: boolean;
 
   @ApiProperty({ example: 'mock' })
@@ -40,7 +40,7 @@ export class AppController {
   health(): HealthDto {
     return {
       status: 'ok',
-      llm: Boolean(this.env.ANTHROPIC_API_KEY),
+      llm: Boolean(this.env.GEMINI_API_KEY),
       embeddings: this.env.EMBEDDING_PROVIDER,
       index: { ready: this.retrieval.isReady, docs: this.retrieval.docCount },
     };

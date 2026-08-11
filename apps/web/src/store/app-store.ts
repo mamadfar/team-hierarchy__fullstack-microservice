@@ -1,6 +1,8 @@
 import { create } from 'zustand';
+import type { SyncErrorKind } from '@/lib/sync-error';
 
 export type TabId = 'explorer' | 'hierarchy';
+export type { SyncErrorKind };
 
 export interface ChatMsg {
   role: 'user' | 'assistant';
@@ -13,12 +15,22 @@ const SIDE_STORAGE_KEY = 'orbit-side';
 
 export interface AppState {
   selectedKey: string;
+  /** Queue keys recommended by the latest assistant answer (multi-highlight). */
+  aiKeys: string[];
   tab: TabId;
   q: string;
   chatOpen: boolean;
   msgs: ChatMsg[];
   busy: boolean;
   syncing: boolean;
+  /** Epoch ms until Refresh is allowed again (0 = ready). */
+  syncCooldownUntil: number;
+  /** Last sync failure message from registry; null when ok. */
+  syncError: string | null;
+  /** How to present the last sync failure (structure vs env/auth). */
+  syncErrorKind: SyncErrorKind | null;
+  /** When true, show the Confluence setup guide (empty registry or sync error). */
+  setupGuideOpen: boolean;
   expandedDomains: Record<string, boolean>;
   toast: string;
   collapsed: boolean;
@@ -44,22 +56,39 @@ export interface AppState {
   pushMsg: (msg: ChatMsg) => void;
   setBusy: (busy: boolean) => void;
   setSyncing: (syncing: boolean) => void;
+  /** Starts a client cooldown; clears automatically when `ms` elapses. */
+  startSyncCooldown: (ms: number) => void;
+  setSyncError: (message: string | null, kind?: SyncErrorKind | null) => void;
+  openSetupGuide: () => void;
+  closeSetupGuide: () => void;
   showToast: (msg: string) => void;
   /** Chat team chip: close chat, switch to Explorer, select + zoom. */
   pickFromChat: (key: string) => void;
+  /**
+   * Apply assistant-recommended queue keys: multi-highlight on Explorer,
+   * switch to Explorer, select + zoom the primary (first) team.
+   * Empty keys clear the AI highlight only.
+   */
+  applyChatTeams: (keys: string[]) => void;
 }
 
 let toastTimer: ReturnType<typeof setTimeout> | undefined;
+let syncCooldownTimer: ReturnType<typeof setTimeout> | undefined;
 
 export const useAppStore = create<AppState>()((set, get) => ({
   selectedKey: '',
+  aiKeys: [],
   tab: 'explorer',
   q: '',
   chatOpen: false,
   msgs: [],
   busy: false,
   syncing: false,
-  expandedDomains: { pay: true },
+  syncCooldownUntil: 0,
+  syncError: null,
+  syncErrorKind: null,
+  setupGuideOpen: false,
+  expandedDomains: {},
   toast: '',
   collapsed: false,
   focusKey: '',
@@ -72,7 +101,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
       focusNonce: s.focusNonce + 1,
       tab: opts?.toExplorer ? 'explorer' : s.tab,
     })),
-  clearSelection: () => set({ selectedKey: '' }),
+  clearSelection: () => set({ selectedKey: '', aiKeys: [] }),
   setTab: (tab) => set({ tab }),
   setQ: (q) => set({ q }),
   toggleDomain: (slug) =>
@@ -98,6 +127,20 @@ export const useAppStore = create<AppState>()((set, get) => ({
   pushMsg: (msg) => set((s) => ({ msgs: [...s.msgs, msg] })),
   setBusy: (busy) => set({ busy }),
   setSyncing: (syncing) => set({ syncing }),
+  startSyncCooldown: (ms) => {
+    if (syncCooldownTimer) clearTimeout(syncCooldownTimer);
+    const until = Date.now() + ms;
+    set({ syncCooldownUntil: until });
+    syncCooldownTimer = setTimeout(() => set({ syncCooldownUntil: 0 }), ms);
+  },
+  setSyncError: (message, kind) =>
+    set({
+      syncError: message,
+      syncErrorKind: message == null ? null : (kind ?? 'structure'),
+      setupGuideOpen: message != null,
+    }),
+  openSetupGuide: () => set({ setupGuideOpen: true }),
+  closeSetupGuide: () => set({ setupGuideOpen: false }),
   showToast: (msg) => {
     if (toastTimer) clearTimeout(toastTimer);
     set({ toast: msg });
@@ -106,5 +149,11 @@ export const useAppStore = create<AppState>()((set, get) => ({
   pickFromChat: (key) => {
     set({ chatOpen: false });
     get().select(key, { toExplorer: true });
+  },
+  applyChatTeams: (keys) => {
+    const unique = [...new Set(keys.filter(Boolean))];
+    set({ aiKeys: unique });
+    const primary = unique[0];
+    if (primary) get().select(primary, { toExplorer: true });
   },
 }));

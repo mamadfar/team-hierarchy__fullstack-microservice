@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common';
-import { ChatAnthropic } from '@langchain/anthropic';
+import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { z } from 'zod';
 import { ENV, Env } from '../config/env';
 
-/** DI token: RoutingLlm instance, or null when ANTHROPIC_API_KEY is unset. */
+/** DI token: RoutingLlm instance, or null when GEMINI_API_KEY is unset. */
 export const LLM = Symbol('LLM');
 
 /** What the answer call must return (structured output / tool call). */
@@ -26,8 +26,8 @@ export type AnswerDraft = z.infer<typeof AnswerDraftSchema>;
 export type LlmMessage = [role: 'system' | 'human' | 'ai', content: string];
 
 /**
- * Minimal structural interface over ChatAnthropic so unit/integration tests
- * can stub the LLM without network or API keys.
+ * Minimal structural interface over ChatGoogleGenerativeAI so unit/integration
+ * tests can stub the LLM without network or API keys.
  */
 export interface RoutingLlm {
   invoke(messages: LlmMessage[]): Promise<{ content: unknown }>;
@@ -42,20 +42,20 @@ export const llmProvider = {
   inject: [ENV],
   useFactory: (env: Env): RoutingLlm | null => {
     const logger = new Logger('LlmProvider');
-    if (!env.ANTHROPIC_API_KEY) {
+    if (!env.GEMINI_API_KEY) {
       logger.warn(
-        'ANTHROPIC_API_KEY not set — /chat runs in deterministic FALLBACK mode (retrieval-only answers)',
+        'GEMINI_API_KEY not set — /chat runs in deterministic FALLBACK mode (retrieval-only answers)',
       );
       return null;
     }
-    logger.log(`LLM: anthropic ${env.LLM_MODEL} (via LangChain)`);
-    const model = new ChatAnthropic({
-      apiKey: env.ANTHROPIC_API_KEY,
+    logger.log(`LLM: gemini ${env.LLM_MODEL} (via LangChain)`);
+    const model = new ChatGoogleGenerativeAI({
+      apiKey: env.GEMINI_API_KEY,
       model: env.LLM_MODEL,
       temperature: 0.2,
-      maxTokens: 600,
+      maxOutputTokens: 600,
     });
-    // ChatAnthropic satisfies RoutingLlm structurally (BaseMessageLike[]
+    // ChatGoogleGenerativeAI satisfies RoutingLlm structurally (BaseMessageLike[]
     // accepts [role, content] tuples); the cast keeps our surface minimal.
     return model as unknown as RoutingLlm;
   },

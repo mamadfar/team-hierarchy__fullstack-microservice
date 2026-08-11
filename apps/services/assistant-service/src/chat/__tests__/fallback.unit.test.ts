@@ -9,7 +9,7 @@ const retrieved: RetrievedTeam[] = [
   { key: 'PAY-REC', name: 'Reconciliation', text: '...', score: 0.01 },
 ];
 
-describe('deterministic fallback answers (no ANTHROPIC_API_KEY)', () => {
+describe('deterministic fallback answers (no GEMINI_API_KEY)', () => {
   it('names the top-2 teams with queue keys, max 2 team refs', () => {
     const res = buildFallbackResponse('en', retrieved);
     expect(res.answer).toContain('Checkout (PAY-CHK)');

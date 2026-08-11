@@ -52,8 +52,29 @@ describe('HttpClient', () => {
 
     const failure = await client.get('/pages/missing').catch((e: unknown) => e);
     expect(failure).toBeInstanceOf(AppError);
-    expect((failure as AppError).message).toContain('404');
+    expect((failure as AppError).message).toMatch(/CONFLUENCE_PAGE_IDS|page not found \(404\)/i);
     expect(calls()).toBe(1);
+  });
+
+  it('maps 401/403 to actionable Confluence env guidance (no secrets)', async () => {
+    const auth = await new HttpClient({
+      adapter: scriptedAdapter([401]).adapter,
+      baseDelayMs: 1,
+    })
+      .get('/pages/1')
+      .catch((e: unknown) => e);
+    expect(auth).toBeInstanceOf(AppError);
+    expect((auth as AppError).status).toBe(502);
+    expect((auth as AppError).message).toMatch(/CONFLUENCE_EMAIL|CONFLUENCE_API_TOKEN/i);
+    expect((auth as AppError).message).not.toMatch(/Bearer |password=/i);
+
+    const forbidden = await new HttpClient({
+      adapter: scriptedAdapter([403]).adapter,
+      baseDelayMs: 1,
+    })
+      .get('/pages/1')
+      .catch((e: unknown) => e);
+    expect((forbidden as AppError).message).toMatch(/CONFLUENCE_BASE_URL|View permission/i);
   });
 
   it('maps timeouts to a 504 AppError', async () => {

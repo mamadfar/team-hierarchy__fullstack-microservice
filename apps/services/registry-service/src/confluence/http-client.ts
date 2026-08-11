@@ -91,6 +91,25 @@ export class HttpClient {
     const url = `${error.config?.baseURL ?? ''}${error.config?.url ?? ''}`;
     if (error.response) {
       const { status, statusText } = error.response;
+      // Keep AppError status 502 so web CSRF 401 stays distinct; message is actionable.
+      if (status === 401) {
+        return new AppError(
+          502,
+          'Confluence authentication failed (401). Set CONFLUENCE_EMAIL and CONFLUENCE_API_TOKEN in .env to a service-account email and API token from https://id.atlassian.com/manage-profile/security/api-tokens (token must belong to that email).',
+        );
+      }
+      if (status === 403) {
+        return new AppError(
+          502,
+          'Confluence access denied (403). Grant the service account View permission on the space, and verify CONFLUENCE_BASE_URL points at your wiki (https://<org>.atlassian.net/wiki).',
+        );
+      }
+      if (status === 404) {
+        return new AppError(
+          502,
+          'Confluence page not found (404). Check CONFLUENCE_PAGE_IDS — use the numeric id from the page URL (.../pages/<id>/...).',
+        );
+      }
       return new AppError(502, `Upstream request failed: GET ${url} -> ${status} ${statusText}`);
     }
     if (error.code === 'ECONNABORTED') {

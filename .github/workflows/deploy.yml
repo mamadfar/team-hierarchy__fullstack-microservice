@@ -38,10 +38,11 @@ jobs:
             # NEXT_PUBLIC_* values are PUBLIC (inlined into the browser bundle)
             # — configure per environment via repo/environment *variables*
             # (Settings -> Secrets and variables -> Actions -> Variables),
-            # never via secrets.
+            # never via secrets. Do not use localhost fallbacks in production.
             build_args: |
-              NEXT_PUBLIC_REGISTRY_API_URL=${{ vars.NEXT_PUBLIC_REGISTRY_API_URL || 'http://localhost:4001' }}
-              NEXT_PUBLIC_ASSISTANT_API_URL=${{ vars.NEXT_PUBLIC_ASSISTANT_API_URL || 'http://localhost:4002' }}
+              NEXT_PUBLIC_REGISTRY_API_URL=${{ vars.NEXT_PUBLIC_REGISTRY_API_URL }}
+              NEXT_PUBLIC_ASSISTANT_API_URL=${{ vars.NEXT_PUBLIC_ASSISTANT_API_URL }}
+              NEXT_PUBLIC_TICKET_URL_TEMPLATE=${{ vars.NEXT_PUBLIC_TICKET_URL_TEMPLATE }}
           - app: registry-service
             dockerfile: infra/docker/registry-service.Dockerfile
             build_args: ""
@@ -52,6 +53,23 @@ jobs:
       - uses: actions/checkout@v4
 
       - uses: docker/setup-buildx-action@v3
+
+      - name: Require public web URL variables
+        if: matrix.app == 'web'
+        run: |
+          missing=0
+          for v in NEXT_PUBLIC_REGISTRY_API_URL NEXT_PUBLIC_ASSISTANT_API_URL; do
+            # shellcheck disable=SC2086
+            eval "val=\$$v"
+            if [ -z "$val" ]; then
+              echo "::error::$v must be set as a GitHub Actions Variable on the production environment"
+              missing=1
+            fi
+          done
+          exit $missing
+        env:
+          NEXT_PUBLIC_REGISTRY_API_URL: ${{ vars.NEXT_PUBLIC_REGISTRY_API_URL }}
+          NEXT_PUBLIC_ASSISTANT_API_URL: ${{ vars.NEXT_PUBLIC_ASSISTANT_API_URL }}
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -107,10 +125,13 @@ jobs:
       #   gh secret set CONFLUENCE_EMAIL      --body "svc-orbit@company.com"
       #   gh secret set CONFLUENCE_API_TOKEN  --body "<token>"
       #   gh secret set CONFLUENCE_PAGE_IDS   --body "84213977,84214102,84214255"
-      #   gh secret set ANTHROPIC_API_KEY     --body "<key>"
+      #   gh secret set GEMINI_API_KEY        --body "<key>"
       #   gh secret set DATABASE_URL          --body "postgres://user:pass@host:5432/orbit"
       #   gh secret set REDIS_URL             --body "redis://host:6379"
-      #   gh secret set SYNC_APP_TOKEN        --body "<long random token>"
+      #   gh secret set SYNC_APP_TOKEN        --body "$(make key NAME=SYNC_APP_TOKEN LENGTH=64)"  # paste value
+      #   gh variable set WEB_ORIGIN --body "https://orbit.example.com"
+      #   gh variable set NEXT_PUBLIC_REGISTRY_API_URL --body "https://registry.example.com"
+      #   gh variable set NEXT_PUBLIC_ASSISTANT_API_URL --body "https://assistant.example.com"
       # --------------------------------------------------------------------
       - name: Deploy (placeholder — wire your ssh/helm/kubectl step here)
         env:
@@ -119,15 +140,22 @@ jobs:
           CONFLUENCE_EMAIL: ${{ secrets.CONFLUENCE_EMAIL }}
           CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
           CONFLUENCE_PAGE_IDS: ${{ secrets.CONFLUENCE_PAGE_IDS }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           REDIS_URL: ${{ secrets.REDIS_URL }}
           SYNC_APP_TOKEN: ${{ secrets.SYNC_APP_TOKEN }}
+          WEB_ORIGIN: ${{ vars.WEB_ORIGIN }}
+          MOCK_CONFLUENCE: "false"
+          EMBEDDING_PROVIDER: gemini
+          EMBEDDING_MODEL: gemini-embedding-001
+          LLM_MODEL: gemini-3.5-flash-lite
+          # web container also needs REGISTRY_API_URL (internal) + SYNC_APP_TOKEN
+          REGISTRY_API_URL: ${{ vars.REGISTRY_API_URL }}
         run: |
           echo "Images pushed to GHCR for commit ${GITHUB_SHA}."
           echo "Runtime env prepared (values masked by GitHub Actions):"
-          echo "  CONFLUENCE_BASE_URL, CONFLUENCE_EMAIL, CONFLUENCE_API_TOKEN, CONFLUENCE_PAGE_IDS"
-          echo "  ANTHROPIC_API_KEY, DATABASE_URL, REDIS_URL, SYNC_APP_TOKEN"
+          echo "  CONFLUENCE_*, GEMINI_API_KEY, DATABASE_URL, REDIS_URL, SYNC_APP_TOKEN"
+          echo "  WEB_ORIGIN, MOCK_CONFLUENCE=false, EMBEDDING_PROVIDER=gemini, LLM_MODEL"
           echo ""
           echo "Replace this step with the real delivery command (ssh / helm / kubectl)."
           echo "The env block above must be forwarded to the service containers at runtime."

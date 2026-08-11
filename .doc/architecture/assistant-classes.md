@@ -55,7 +55,7 @@ classDiagram
         +search(query, limit) "embedding <=> cosine"
     }
     class EmbeddingsFactory {
-        +create(env) Embeddings "mock | voyage | openai"
+        +create(env) Embeddings "mock | gemini"
     }
     class MockEmbeddings {
         +embedQuery / embedDocuments "deterministic 1536-dim, offline"

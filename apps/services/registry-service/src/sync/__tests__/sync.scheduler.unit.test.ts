@@ -24,6 +24,14 @@ describe('SyncScheduler', () => {
     expect(registry.addCronJob).not.toHaveBeenCalled();
   });
 
+  it('registers nothing when SYNC_CRON is an inline-comment remnant', () => {
+    const { scheduler, registry } = makeScheduler(
+      '# optional cron, e.g. "0 * * * *" (empty = off)',
+    );
+    scheduler.onModuleInit();
+    expect(registry.addCronJob).not.toHaveBeenCalled();
+  });
+
   it('registers and starts the cron job when SYNC_CRON is set', () => {
     const { scheduler, registry } = makeScheduler('0 * * * *');
     scheduler.onModuleInit();

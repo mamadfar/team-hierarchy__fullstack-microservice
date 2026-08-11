@@ -176,7 +176,7 @@ describe('assistant-service integration', () => {
     process.env.DATABASE_URL = testDbUrl();
     process.env.REDIS_URL = process.env.REDIS_URL ?? 'redis://localhost:6380';
     process.env.EMBEDDING_PROVIDER = 'mock';
-    delete process.env.ANTHROPIC_API_KEY;
+    delete process.env.GEMINI_API_KEY;
   });
 
   describe('with a stubbed LLM', () => {

@@ -16,18 +16,26 @@ async function bootstrap(): Promise<void> {
   app.enableCors({ origin: env.WEB_ORIGIN, methods: ['GET', 'POST', 'OPTIONS'] });
   app.enableShutdownHooks();
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('Orbit Registry Service')
-    .setDescription(
-      'Confluence ingestion + team registry API. Read-only except POST /sync (app token).',
-    )
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
-  SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, swaggerConfig));
+  if (env.NODE_ENV === 'production') {
+    app.getHttpAdapter().getInstance().set('trust proxy', 1);
+  } else {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('Orbit Registry Service')
+      .setDescription(
+        'Confluence ingestion + team registry API. Read-only except POST /sync (app token).',
+      )
+      .setVersion('0.2.0')
+      .addBearerAuth()
+      .build();
+    SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, swaggerConfig));
+  }
 
   await app.listen(env.REGISTRY_PORT);
-  Logger.log(`registry-service listening on :${env.REGISTRY_PORT} (docs at /docs)`, 'Bootstrap');
+  Logger.log(
+    `registry-service listening on :${env.REGISTRY_PORT}` +
+      (env.NODE_ENV === 'production' ? '' : ' (docs at /docs)'),
+    'Bootstrap',
+  );
 }
 
 bootstrap().catch((error: unknown) => {

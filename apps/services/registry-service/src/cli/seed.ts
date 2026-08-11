@@ -30,6 +30,7 @@ async function main(): Promise<void> {
     const db = drizzle(pool, { schema });
     const syncService = new SyncService(
       env,
+      pool,
       new SeedSource(),
       new ConfluenceClient(env),
       new ConfluencePageParser(),

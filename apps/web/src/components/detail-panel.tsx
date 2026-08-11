@@ -97,8 +97,8 @@ export function DetailPanel({ snapshot, index }: DetailPanelProps) {
             ref={closeRef}
             type="button"
             onClick={clearSelection}
-            aria-label="Close"
-            title="Close"
+            aria-label={t('close')}
+            title={t('close')}
             className="border-none bg-transparent cursor-pointer text-muted p-1 flex flex-none"
           >
             <IconClose size={15} />

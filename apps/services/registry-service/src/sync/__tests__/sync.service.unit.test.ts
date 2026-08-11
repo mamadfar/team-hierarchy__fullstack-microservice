@@ -67,15 +67,23 @@ describe('SyncService', () => {
   let seedSource: { load: ReturnType<typeof vi.fn> };
   let service: SyncService;
 
-  const makeService = () =>
-    new SyncService(
+  const makeService = () => {
+    const pool = {
+      connect: vi.fn().mockResolvedValue({
+        query: vi.fn().mockResolvedValue({ rows: [{ ok: true }] }),
+        release: vi.fn(),
+      }),
+    };
+    return new SyncService(
       parseEnv({ MOCK_CONFLUENCE: 'true', SYNC_APP_TOKEN: 't' }),
+      pool as never,
       seedSource as unknown as SeedSource,
       { getPageStorage: vi.fn() } as unknown as ConfluenceClient,
       { parsePage: vi.fn() } as unknown as ConfluencePageParser,
       repository as unknown as SyncRepository,
       redis as unknown as Redis,
     );
+  };
 
   beforeEach(() => {
     repository = {

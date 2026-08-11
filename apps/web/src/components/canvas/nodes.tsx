@@ -312,6 +312,7 @@ const DomainCard = memo(function DomainCard({ data }: NodeProps<DomainCardNode>)
 /** Tribe card with clickable team rows (hierarchy view). */
 const TribeCard = memo(function TribeCard({ data }: NodeProps<TribeCardNode>) {
   const select = useAppStore((s) => s.select);
+  const aiKeys = useAppStore((s) => s.aiKeys);
   return (
     <div
       style={{
@@ -344,7 +345,7 @@ const TribeCard = memo(function TribeCard({ data }: NodeProps<TribeCardNode>) {
       </div>
       <div>
         {data.teams.map((team, i) => {
-          const isSel = data.sel === team.queueKey;
+          const isSel = data.sel === team.queueKey || aiKeys.includes(team.queueKey);
           const hue = teamHue(team.hue, data.hue);
           return (
             <div

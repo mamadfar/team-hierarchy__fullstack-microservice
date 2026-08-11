@@ -45,15 +45,41 @@ export const clientEnv = {
   ticketUrlTemplate: clientParsed.data.NEXT_PUBLIC_TICKET_URL_TEMPLATE ?? null,
 } as const;
 
-const serverSchema = z.object({
-  /** Bearer token forwarded to registry-service POST /sync. Server-only. */
-  SYNC_APP_TOKEN: z.preprocess(emptyToUndef, z.string().min(1).default('dev-sync-token')),
-  /**
-   * Server-side registry base URL (e.g. http://registry:4001 inside docker).
-   * Falls back to NEXT_PUBLIC_REGISTRY_API_URL when unset.
-   */
-  REGISTRY_API_URL: z.preprocess(emptyToUndef, z.string().url().optional()),
-});
+const WEAK_SYNC_TOKENS = new Set(['dev-sync-token']);
+
+const serverSchema = z
+  .object({
+    /** Bearer token forwarded to registry-service POST /sync. Server-only. */
+    SYNC_APP_TOKEN: z.preprocess(emptyToUndef, z.string().min(1).default('dev-sync-token')),
+    /**
+     * Server-side registry base URL (e.g. http://registry:4001 inside docker).
+     * Falls back to NEXT_PUBLIC_REGISTRY_API_URL when unset.
+     */
+    REGISTRY_API_URL: z.preprocess(emptyToUndef, z.string().url().optional()),
+    /**
+     * Mirrored from the shared env contract so production+live-Confluence
+     * deployments reject the weak default sync token on the web proxy too.
+     */
+    MOCK_CONFLUENCE: z.preprocess(emptyToUndef, z.string().optional()),
+    NODE_ENV: z.preprocess(emptyToUndef, z.string().optional()),
+  })
+  .superRefine((env, ctx) => {
+    const mock =
+      env.MOCK_CONFLUENCE === undefined
+        ? env.NODE_ENV !== 'production'
+        : ['true', '1', 'yes', 'on'].includes(env.MOCK_CONFLUENCE.trim().toLowerCase());
+    if (
+      !mock &&
+      (WEAK_SYNC_TOKENS.has(env.SYNC_APP_TOKEN) || env.SYNC_APP_TOKEN.length < 32)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['SYNC_APP_TOKEN'],
+        message:
+          'SYNC_APP_TOKEN must be >= 32 chars and not the local default when MOCK_CONFLUENCE=false (try: make key NAME=SYNC_APP_TOKEN)',
+      });
+    }
+  });
 
 export interface ServerEnv {
   syncAppToken: string;
@@ -67,6 +93,8 @@ export function getServerEnv(): ServerEnv {
   const parsed = serverSchema.safeParse({
     SYNC_APP_TOKEN: process.env.SYNC_APP_TOKEN,
     REGISTRY_API_URL: process.env.REGISTRY_API_URL,
+    MOCK_CONFLUENCE: process.env.MOCK_CONFLUENCE,
+    NODE_ENV: process.env.NODE_ENV,
   });
   if (!parsed.success) {
     throw new Error(

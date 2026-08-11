@@ -70,8 +70,8 @@ export function Sidebar({ snapshot, index, results, onRefresh }: SidebarProps) {
               <button
                 type="button"
                 onClick={() => setQ('')}
-                aria-label="Clear search"
-                title="Clear search"
+                aria-label={t('clearSearch')}
+                title={t('clearSearch')}
                 className="absolute right-[9px] top-1/2 -translate-y-1/2 border-none bg-transparent cursor-pointer text-muted p-[2px] flex"
               >
                 <IconClose size={13} strokeWidth={2.4} />
@@ -151,6 +151,7 @@ function SearchResults({ index, results }: { index: RegistryIndex; results: Team
 
 function Tree({ snapshot, index }: { snapshot: RegistrySnapshot; index: RegistryIndex }) {
   const selectedKey = useAppStore((s) => s.selectedKey);
+  const aiKeys = useAppStore((s) => s.aiKeys);
   const expandedDomains = useAppStore((s) => s.expandedDomains);
   const toggleDomain = useAppStore((s) => s.toggleDomain);
   const select = useAppStore((s) => s.select);
@@ -215,7 +216,8 @@ function Tree({ snapshot, index }: { snapshot: RegistrySnapshot; index: Registry
                         </div>
                         {(index.teamsByTribe.get(tribe.slug) ?? []).map((team) => {
                           const hue = index.hueOf(team);
-                          const isSel = selectedKey === team.queueKey;
+                          const isSel =
+                            selectedKey === team.queueKey || aiKeys.includes(team.queueKey);
                           return (
                             <div
                               key={team.queueKey}
@@ -263,6 +265,8 @@ function SourceFooter({
 }) {
   const t = useTranslations();
   const syncing = useAppStore((s) => s.syncing);
+  const syncCooldownUntil = useAppStore((s) => s.syncCooldownUntil);
+  const refreshBlocked = syncing || syncCooldownUntil > Date.now();
   return (
     <Card className="flex-none rounded-none border-0 border-t border-border bg-surface2 px-[14px] py-3 flex flex-col gap-2">
       <div className="flex items-center gap-2">
@@ -273,15 +277,17 @@ function SourceFooter({
             <button
               type="button"
               onClick={onRefresh}
-              aria-label={t('refresh')}
-              title={t('refresh')}
-              className="border border-border bg-surface rounded-[7px] w-[26px] h-[26px] flex items-center justify-center cursor-pointer text-muted hov-accent-line"
+              disabled={refreshBlocked}
+              aria-busy={syncing || undefined}
+              aria-label={refreshBlocked ? t('syncRateLimited') : t('refresh')}
+              title={refreshBlocked ? t('syncRateLimited') : t('refresh')}
+              className="border border-border bg-surface rounded-[7px] w-[26px] h-[26px] flex items-center justify-center text-muted hov-accent-line disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed"
               style={{ transition: 'border-color .15s, color .15s' }}
             >
               <IconRefresh size={13} className={syncing ? 'anim-spin-orbit' : undefined} />
             </button>
           </TooltipTrigger>
-          <TooltipContent>{t('refresh')}</TooltipContent>
+          <TooltipContent>{refreshBlocked ? t('syncRateLimited') : t('refresh')}</TooltipContent>
         </Tooltip>
       </div>
       <div className="flex flex-col gap-1">

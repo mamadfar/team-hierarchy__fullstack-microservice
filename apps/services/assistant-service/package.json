@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "commonjs",
-  "description": "Orbit assistant-service — RAG chat API (hybrid BM25 + pgvector retrieval, Anthropic answers)",
+  "description": "Orbit assistant-service — RAG chat API (hybrid BM25 + pgvector retrieval, Gemini answers)",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "dev": "tsx watch src/main.ts",
@@ -16,10 +16,8 @@
     "eval": "tsx eval/run-eval.ts"
   },
   "dependencies": {
-    "@langchain/anthropic": "^0.3.26",
-    "@langchain/community": "^0.3.0",
     "@langchain/core": "^0.3.66",
-    "@langchain/openai": "^0.6.0",
+    "@langchain/google-genai": "^0.2.18",
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/platform-express": "^11.0.0",

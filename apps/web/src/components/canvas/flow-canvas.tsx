@@ -45,6 +45,7 @@ function FlowInner({ snapshot, index, matchKeys }: FlowCanvasProps) {
 
   const tab = useAppStore((s) => s.tab);
   const selected = useAppStore((s) => s.selectedKey);
+  const aiKeys = useAppStore((s) => s.aiKeys);
   const focusKey = useAppStore((s) => s.focusKey);
   const focusNonce = useAppStore((s) => s.focusNonce);
   const select = useAppStore((s) => s.select);
@@ -62,6 +63,7 @@ function FlowInner({ snapshot, index, matchKeys }: FlowCanvasProps) {
     [tab, snapshot],
   );
   const matchSet = useMemo(() => (matchKeys ? new Set(matchKeys) : null), [matchKeys]);
+  const aiSet = useMemo(() => (aiKeys.length ? new Set(aiKeys) : null), [aiKeys]);
   const neighbors = useMemo(() => {
     const s = new Set<string>();
     if (selected) {
@@ -80,8 +82,11 @@ function FlowInner({ snapshot, index, matchKeys }: FlowCanvasProps) {
         case 'team': {
           const dim = matchSet
             ? !matchSet.has(n.id)
-            : !!selected && selected !== n.id && !neighbors.has(n.id);
-          return { ...n, data: { ...n.data, dim, sel: selected === n.id } };
+            : aiSet
+              ? !aiSet.has(n.id)
+              : !!selected && selected !== n.id && !neighbors.has(n.id);
+          const sel = selected === n.id || (aiSet?.has(n.id) ?? false);
+          return { ...n, data: { ...n.data, dim, sel } };
         }
         case 'tribeCard':
           return { ...n, data: { ...n.data, sel: selected, dim: hdim(n.id), selB: branch === n.id } };
@@ -95,7 +100,7 @@ function FlowInner({ snapshot, index, matchKeys }: FlowCanvasProps) {
           return n;
       }
     });
-  }, [base, matchSet, selected, neighbors, branchSet, branch]);
+  }, [base, matchSet, aiSet, selected, neighbors, branchSet, branch]);
 
   const edges = useMemo<Edge[]>(() => {
     return base.edges.map((e): Edge => {

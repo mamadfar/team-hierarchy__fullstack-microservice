@@ -9,12 +9,33 @@ COMPOSE_DEV  := docker compose $(COMPOSE_ENV) -f infra/docker/docker-compose.dev
 
 .DEFAULT_GOAL := help
 
+# make key NAME=SYNC_APP_TOKEN [LENGTH=32|64]
+NAME ?=
+LENGTH ?= 64
+
 help: ## List available targets
-	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
+	@grep -hE '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
 
 setup: ## Install deps + copy .env.example -> .env if missing
 	pnpm install
 	@test -f .env || cp .env.example .env
+
+key: ## Generate a crypto secret: make key NAME=SYNC_APP_TOKEN [LENGTH=32|64]
+	@if [ -z "$(NAME)" ]; then \
+	  echo "Usage: make key NAME=SYNC_APP_TOKEN [LENGTH=32|64]"; \
+	  echo "  NAME    env var label to print (e.g. SYNC_APP_TOKEN, GEMINI_API_KEY)"; \
+	  echo "  LENGTH  32 or 64 hex chars (default 64)"; \
+	  exit 1; \
+	fi; \
+	if [ "$(LENGTH)" != "32" ] && [ "$(LENGTH)" != "64" ]; then \
+	  echo "LENGTH must be 32 or 64 (got: $(LENGTH))"; \
+	  exit 1; \
+	fi; \
+	KEY=$$(node -e "process.stdout.write(require('crypto').randomBytes($(LENGTH)/2).toString('hex'))"); \
+	echo ""; \
+	echo "$(NAME)=$$KEY"; \
+	echo ""; \
+	echo "Add to .env (or: gh secret set $(NAME) --body \"$$KEY\")"
 
 dev-infra: ## Start local postgres + redis only (for `make dev`)
 	$(COMPOSE_DEV) up -d --wait
@@ -62,4 +83,4 @@ docker-down: ## Stop the full stack
 ci: ## What CI runs: lint, typecheck, unit tests, build
 	pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run build
 
-.PHONY: help setup dev-infra dev build lint typecheck test test-integration eval db-migrate db-seed sync docker-build docker-up docker-down ci
+.PHONY: help setup key dev-infra dev build lint typecheck test test-integration eval db-migrate db-seed sync docker-build docker-up docker-down ci

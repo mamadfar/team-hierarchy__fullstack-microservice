@@ -16,7 +16,7 @@ graph LR
     end
 
     Confluence["Confluence Cloud<br/>(team tables, read-only)"]
-    Anthropic["Anthropic API<br/>(Claude via LangChain)"]
+    Gemini["Gemini API<br/>(chat + embeddings via LangChain)"]
 
     Employee -->|browser| Web
     Editor -->|edits tables| Confluence
@@ -28,7 +28,7 @@ graph LR
     Registry --> Redis
     Assistant --> PG
     Assistant --> Redis
-    Assistant -->|answers + query rewrite| Anthropic
+    Assistant -->|answers + query rewrite| Gemini
 ```
 
 - The app is **read-only**: the only mutation any user can cause is a re-sync (Refresh button). All registry edits happen in Confluence.

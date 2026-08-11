@@ -1,6 +1,6 @@
 'use client';
 
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import type { Locale } from '@orbit/shared';
 import { LOCALES, LOCALE_COOKIE, LOCALE_NATIVE_NAMES, isLocale } from '@/i18n/locales';
@@ -20,6 +20,7 @@ export interface LanguageMenuProps {
 
 /** Flag dropdown — UK/HU/FR/NL flags, native names, check on the active locale. */
 export function LanguageMenu({ onLocaleChange }: LanguageMenuProps) {
+  const t = useTranslations();
   const rawLocale = useLocale();
   const locale: Locale = isLocale(rawLocale) ? rawLocale : 'en';
   const router = useRouter();
@@ -29,7 +30,9 @@ export function LanguageMenu({ onLocaleChange }: LanguageMenuProps) {
       onLocaleChange(next);
       return;
     }
-    document.cookie = `${LOCALE_COOKIE}=${next};path=/;max-age=31536000;samesite=lax`;
+    const secure =
+      typeof window !== 'undefined' && window.location.protocol === 'https:' ? ';Secure' : '';
+    document.cookie = `${LOCALE_COOKIE}=${next};path=/;max-age=31536000;samesite=lax${secure}`;
     router.refresh();
   };
 
@@ -38,7 +41,7 @@ export function LanguageMenu({ onLocaleChange }: LanguageMenuProps) {
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          aria-label="Language"
+          aria-label={t('language')}
           className="flex items-center gap-2 h-8 px-[10px] border border-border bg-surface rounded-lg cursor-pointer text-xs font-semibold hov-surface2"
           style={{ transition: 'background .15s' }}
         >

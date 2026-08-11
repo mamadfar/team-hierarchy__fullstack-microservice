@@ -8,7 +8,7 @@ sequenceDiagram
     participant UI as web chat panel
     participant CC as ChatController (throttled per IP)
     participant CS as ChatService
-    participant LLM as Claude via LangChain
+    participant LLM as Gemini via LangChain
     participant RET as RetrievalService
     participant BM as OkapiBM25 (in-memory)
     participant PV as PgvectorSearcher
@@ -16,7 +16,7 @@ sequenceDiagram
 
     UI->>CC: POST /chat { messages, lang } (zod: ChatRequestSchema)
     CC->>CS: chat(request)
-    alt ANTHROPIC_API_KEY set
+    alt GEMINI_API_KEY set
         CS->>LLM: query-rewrite prompt (history + last message)
         LLM-->>CS: standalone lexical query with synonyms
     else no key

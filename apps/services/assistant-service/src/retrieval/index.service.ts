@@ -26,6 +26,8 @@ export class IndexService implements OnApplicationBootstrap, OnApplicationShutdo
   private readonly retriever: HybridRetriever;
   private ready = false;
   private rebuilding = false;
+  /** Set when a sync arrives mid-rebuild so we rerun once the current rebuild finishes. */
+  private pendingRebuild = false;
   private retryTimer: NodeJS.Timeout | null = null;
   private retryAttempt = 0;
   private shuttingDown = false;
@@ -67,23 +69,33 @@ export class IndexService implements OnApplicationBootstrap, OnApplicationShutdo
 
   /** Public entry used by boot + the sync listener. Serialized; failures schedule a retry. */
   async rebuildWithRetry(): Promise<void> {
-    if (this.rebuilding || this.shuttingDown) return;
+    if (this.shuttingDown) return;
+    if (this.rebuilding) {
+      this.pendingRebuild = true;
+      return;
+    }
     this.rebuilding = true;
     try {
-      await this.rebuild();
-      this.retryAttempt = 0;
-    } catch (err) {
-      const delayMs = Math.min(30_000, 2_000 * 2 ** this.retryAttempt);
-      this.retryAttempt += 1;
-      this.logger.warn(
-        `index rebuild failed (registry may still be booting/seeding): ${
-          err instanceof Error ? err.message : String(err)
-        } — retrying in ${Math.round(delayMs / 1000)}s`,
-      );
-      if (!this.shuttingDown) {
-        this.retryTimer = setTimeout(() => void this.rebuildWithRetry(), delayMs);
-        this.retryTimer.unref?.();
-      }
+      do {
+        this.pendingRebuild = false;
+        try {
+          await this.rebuild();
+          this.retryAttempt = 0;
+        } catch (err) {
+          const delayMs = Math.min(30_000, 2_000 * 2 ** this.retryAttempt);
+          this.retryAttempt += 1;
+          this.logger.warn(
+            `index rebuild failed (registry may still be booting/seeding): ${
+              err instanceof Error ? err.message : String(err)
+            } — retrying in ${Math.round(delayMs / 1000)}s`,
+          );
+          if (!this.shuttingDown) {
+            this.retryTimer = setTimeout(() => void this.rebuildWithRetry(), delayMs);
+            this.retryTimer.unref?.();
+          }
+          return;
+        }
+      } while (this.pendingRebuild && !this.shuttingDown);
     } finally {
       this.rebuilding = false;
     }

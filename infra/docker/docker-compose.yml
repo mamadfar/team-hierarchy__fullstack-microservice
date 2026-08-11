@@ -6,7 +6,7 @@
 # Configuration: every ${VAR:-default} below is resolved from the INVOKING
 # SHELL environment (or a `--env-file`). The repo-root .env is NOT auto-loaded,
 # because the compose project directory is infra/docker/. Defaults boot a fully
-# offline stack (MOCK_CONFLUENCE=true); export the CONFLUENCE_* / ANTHROPIC_*
+# offline stack (MOCK_CONFLUENCE=true); export the CONFLUENCE_* / GEMINI_*
 # vars (or run `docker compose --env-file .env -f infra/docker/docker-compose.yml up`)
 # for real integrations. Secrets default to EMPTY — none are hardcoded here.
 # ============================================================================
@@ -86,12 +86,11 @@ services:
       DATABASE_URL: postgres://orbit:orbit@postgres:5432/orbit
       REDIS_URL: redis://redis:6379
       WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
-      # empty = mock/offline answers; set for real LLM responses
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-      LLM_MODEL: ${LLM_MODEL:-claude-haiku-4-5}
+      # empty = mock/offline answers; set GEMINI_API_KEY for real LLM responses
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-gemini-3.5-flash-lite}
       EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-mock}
-      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-voyage-3-lite}
-      EMBEDDING_API_KEY: ${EMBEDDING_API_KEY:-}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-gemini-embedding-001}
     ports:
       - "4002:4002"
     # intentionally NOT gated on registry health — the assistant retries until
@@ -129,6 +128,8 @@ services:
       # compose network with the app token — the token never ships to the browser
       REGISTRY_API_URL: http://registry:4001
       SYNC_APP_TOKEN: ${SYNC_APP_TOKEN:-dev-sync-token}
+      # Keep mock+weak-token legal under NODE_ENV=production for local docker-up
+      MOCK_CONFLUENCE: ${MOCK_CONFLUENCE:-true}
     ports:
       - "3000:3000"
     depends_on:

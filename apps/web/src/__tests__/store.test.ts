@@ -13,10 +13,10 @@ afterEach(() => {
 });
 
 describe('app store', () => {
-  it('starts with the pay domain expanded and the Explorer tab', () => {
+  it('starts with no domains expanded and the Explorer tab', () => {
     const s = useAppStore.getState();
     expect(s.tab).toBe('explorer');
-    expect(s.expandedDomains).toEqual({ pay: true });
+    expect(s.expandedDomains).toEqual({});
     expect(s.selectedKey).toBe('');
     expect(s.focusNonce).toBe(0);
   });
@@ -62,7 +62,67 @@ describe('app store', () => {
     expect(s.focusNonce).toBe(1);
   });
 
+  it('applyChatTeams highlights all keys, selects primary, switches to Explorer', () => {
+    useAppStore.getState().setTab('hierarchy');
+    useAppStore.getState().applyChatTeams(['HLX-CHK', 'HLX-PRM']);
+    const s = useAppStore.getState();
+    expect(s.aiKeys).toEqual(['HLX-CHK', 'HLX-PRM']);
+    expect(s.selectedKey).toBe('HLX-CHK');
+    expect(s.focusKey).toBe('HLX-CHK');
+    expect(s.focusNonce).toBe(1);
+    expect(s.tab).toBe('explorer');
+  });
+
+  it('applyChatTeams([]) clears AI highlight without changing selection', () => {
+    useAppStore.getState().select('HLX-CHK');
+    useAppStore.setState({ aiKeys: ['HLX-CHK'] });
+    useAppStore.getState().applyChatTeams([]);
+    const s = useAppStore.getState();
+    expect(s.aiKeys).toEqual([]);
+    expect(s.selectedKey).toBe('HLX-CHK');
+  });
+
+  it('clearSelection also clears AI highlight keys', () => {
+    useAppStore.getState().applyChatTeams(['HLX-CHK', 'HLX-FRD']);
+    useAppStore.getState().clearSelection();
+    const s = useAppStore.getState();
+    expect(s.selectedKey).toBe('');
+    expect(s.aiKeys).toEqual([]);
+  });
+
+  it('startSyncCooldown sets until then clears after ms', () => {
+    vi.useFakeTimers();
+    useAppStore.getState().startSyncCooldown(20_000);
+    expect(useAppStore.getState().syncCooldownUntil).toBeGreaterThan(Date.now());
+    vi.advanceTimersByTime(20_000);
+    expect(useAppStore.getState().syncCooldownUntil).toBe(0);
+  });
+
+  it('setSyncError opens the Confluence setup guide; clear closes it', () => {
+    useAppStore.getState().setSyncError('teams table not found', 'structure');
+    let s = useAppStore.getState();
+    expect(s.syncError).toBe('teams table not found');
+    expect(s.syncErrorKind).toBe('structure');
+    expect(s.setupGuideOpen).toBe(true);
+    useAppStore.getState().closeSetupGuide();
+    expect(useAppStore.getState().setupGuideOpen).toBe(false);
+    useAppStore.getState().setSyncError(null);
+    s = useAppStore.getState();
+    expect(s.syncError).toBeNull();
+    expect(s.syncErrorKind).toBeNull();
+    expect(s.setupGuideOpen).toBe(false);
+  });
+
+  it('setSyncError stores config kind for auth/env failures', () => {
+    useAppStore.getState().setSyncError('CONFLUENCE_PAGE_IDS is empty', 'config');
+    const s = useAppStore.getState();
+    expect(s.syncErrorKind).toBe('config');
+    expect(s.setupGuideOpen).toBe(true);
+  });
+
   it('toggleDomain flips per-domain expansion', () => {
+    useAppStore.getState().toggleDomain('pay');
+    expect(useAppStore.getState().expandedDomains['pay']).toBe(true);
     useAppStore.getState().toggleDomain('pay');
     expect(useAppStore.getState().expandedDomains['pay']).toBe(false);
     useAppStore.getState().toggleDomain('risk');

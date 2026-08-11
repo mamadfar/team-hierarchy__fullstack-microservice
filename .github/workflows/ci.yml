@@ -1,7 +1,7 @@
 # ============================================================================
 # CI — lint, typecheck, unit tests, build, integration tests, docker builds.
 # ALWAYS runs with MOCK_CONFLUENCE=true: CI never touches real Confluence or
-# Anthropic and never references production secrets.
+# Gemini and never references production secrets.
 # ============================================================================
 name: CI
 

@@ -11,6 +11,8 @@ const BoolFromString = z.preprocess((value) => {
   return value; // let z.boolean() produce a clear error
 }, z.boolean());
 
+const WEAK_SYNC_TOKENS = new Set(['dev-sync-token']);
+
 export const EnvSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
@@ -23,7 +25,11 @@ export const EnvSchema = z
     CONFLUENCE_API_TOKEN: z.string().default(''),
     /** Comma-separated page ids; order = display order. */
     CONFLUENCE_PAGE_IDS: z.string().default(''),
-    MOCK_CONFLUENCE: BoolFromString.default(true),
+    /**
+     * Default true for local/CI. In production the default flips to false so a
+     * forgotten env var cannot silently serve seed data as live registry.
+     */
+    MOCK_CONFLUENCE: BoolFromString.optional(),
 
     /** Optional cron expression; empty/unset = no scheduled sync. */
     SYNC_CRON: z.string().optional(),
@@ -36,6 +42,13 @@ export const EnvSchema = z
     REGISTRY_PORT: z.coerce.number().int().min(0).max(65535).default(4001),
     WEB_ORIGIN: z.string().min(1).default('http://localhost:3000'),
   })
+  .transform((env) => ({
+    ...env,
+    MOCK_CONFLUENCE:
+      env.MOCK_CONFLUENCE !== undefined
+        ? env.MOCK_CONFLUENCE
+        : env.NODE_ENV !== 'production',
+  }))
   .superRefine((env, ctx) => {
     if (!env.MOCK_CONFLUENCE) {
       const required = [
@@ -52,6 +65,18 @@ export const EnvSchema = z
             message: `${key} is required when MOCK_CONFLUENCE=false`,
           });
         }
+      }
+      // Real Confluence sync must not use the documented local default token.
+      if (
+        WEAK_SYNC_TOKENS.has(env.SYNC_APP_TOKEN) ||
+        env.SYNC_APP_TOKEN.length < 32
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['SYNC_APP_TOKEN'],
+          message:
+            'SYNC_APP_TOKEN must be >= 32 chars and not the local default when MOCK_CONFLUENCE=false (try: make key NAME=SYNC_APP_TOKEN)',
+        });
       }
     }
   });

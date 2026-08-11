@@ -11,6 +11,7 @@ const env = parseEnv({
   CONFLUENCE_EMAIL: 'svc-orbit@company.com',
   CONFLUENCE_API_TOKEN: 'token',
   CONFLUENCE_PAGE_IDS: '84213977',
+  SYNC_APP_TOKEN: 'unit-test-sync-token-32chars-min!!',
 });
 
 describe('ConfluenceClient', () => {

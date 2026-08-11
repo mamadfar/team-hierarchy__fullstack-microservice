@@ -2,6 +2,8 @@
 
 Contract: [.env.example](../../.env.example) (documented, validated by zod at each boot — registry `src/config/env.ts`, assistant `src/config/env.ts`, web `src/env.ts`).
 
+Generate local secrets: `make key NAME=SYNC_APP_TOKEN [LENGTH=32|64]`.
+
 ## New env var — same-change checklist
 1. `.env.example` (with a comment; empty default for secrets).
 2. The consuming package's zod env schema (+ its unit expectations if any).
@@ -13,7 +15,8 @@ Contract: [.env.example](../../.env.example) (documented, validated by zod at ea
 
 ## Secrets policy
 - Secrets live in env only: never in code, compose files, Dockerfiles, images, logs, or test fixtures. CI runs entirely with `MOCK_CONFLUENCE=true` and zero real secrets.
-- Production injection: GitHub Actions secrets → `deploy.yml` runtime env (`CONFLUENCE_BASE_URL/EMAIL/API_TOKEN/PAGE_IDS`, `ANTHROPIC_API_KEY`, `DATABASE_URL`, `REDIS_URL`, `SYNC_APP_TOKEN`). Setup commands: [docs/CONFLUENCE_SETUP.md](../CONFLUENCE_SETUP.md) §6. Public web build args come from GitHub **Variables**, not secrets.
+- Production injection: GitHub Actions secrets → `deploy.yml` runtime env (`CONFLUENCE_BASE_URL/EMAIL/API_TOKEN/PAGE_IDS`, `GEMINI_API_KEY`, `DATABASE_URL`, `REDIS_URL`, `SYNC_APP_TOKEN`). Variables: `WEB_ORIGIN`, `NEXT_PUBLIC_*`, optional `REGISTRY_API_URL`. Setup commands: [docs/CONFLUENCE_SETUP.md](../CONFLUENCE_SETUP.md) §6. Public web build args come from GitHub **Variables**, not secrets.
+- When `MOCK_CONFLUENCE=false`, `SYNC_APP_TOKEN` must be ≥32 chars and not `dev-sync-token`.
 - Confluence token: read-only service account, one space, rotate quarterly (= update one GitHub secret + redeploy).
 
 ## Environment safety

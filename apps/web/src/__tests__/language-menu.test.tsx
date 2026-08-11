@@ -32,7 +32,7 @@ describe('language dropdown', () => {
     const user = userEvent.setup();
     render(<Harness />);
 
-    const trigger = screen.getByRole('button', { name: 'Language' });
+    const trigger = screen.getByRole('button', { name: en.language });
     expect(trigger).toHaveTextContent('EN');
 
     await user.click(trigger);
@@ -48,10 +48,10 @@ describe('language dropdown', () => {
 
     expect(screen.getByTestId('active-tagline')).toHaveTextContent('Team Atlas');
 
-    await user.click(screen.getByRole('button', { name: 'Language' }));
+    await user.click(screen.getByRole('button', { name: en.language }));
     await user.click(await screen.findByText('Magyar'));
 
-    expect(screen.getByRole('button', { name: 'Language' })).toHaveTextContent('HU');
+    expect(screen.getByRole('button', { name: hu.language })).toHaveTextContent('HU');
     expect(screen.getByTestId('active-tagline')).toHaveTextContent('Csapattérkép');
   });
 
@@ -59,10 +59,10 @@ describe('language dropdown', () => {
     const user = userEvent.setup();
     render(<Harness />);
 
-    await user.click(screen.getByRole('button', { name: 'Language' }));
+    await user.click(screen.getByRole('button', { name: en.language }));
     await user.click(await screen.findByText('Français'));
 
-    expect(screen.getByRole('button', { name: 'Language' })).toHaveTextContent('FR');
+    expect(screen.getByRole('button', { name: fr.language })).toHaveTextContent('FR');
     expect(screen.getByTestId('active-tagline')).toHaveTextContent('Atlas des équipes');
   });
 });
