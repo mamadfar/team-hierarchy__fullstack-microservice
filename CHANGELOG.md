@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.5
+
+- Add a copy/paste-ready Confluence starter page with realistic mock data for company, team, domain, and link tables.
+
 All notable changes to Orbit. Every shipped change bumps the root `package.json` version and adds an entry here (newest first).
 
 ## 0.2.4 — 2026-08-11

@@ -71,23 +71,75 @@ Rules:
 - Missing config/teams tables or required columns → sync **422** with a clear message; the UI shows this guide instead of an empty map. Previous snapshot stays live on failure.
 - **Refresh** (UI) is client rate-limited (~20s cooldown) and aborts an in-flight sync if another starts; registry `POST /sync` remains throttled at **3/min** (bearer `SYNC_APP_TOKEN`).
 
-### Example (Helix-style — copy into Confluence)
+### Starter page (mock data — copy into Confluence, then replace)
+
+Paste the following tables into a new Confluence page. The values are intentionally fictional but demonstrate the expected structure and relationships.
+
+**Copy area**
+
+```text
+Company config
+
+| Key | Value |
+|---|---|
+| Name | Northstar Labs |
+| Icon | building |
+| Color | 205 |
+| Description | Software products, developer tooling, and platform operations. |
+
+Teams
+
+| Team Name | Queue Key | Tribe | Domain | Description | Applications | Keywords | Icon | Color | Channel | Team Lead | On-call |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Developer Experience | NSL-DXP | Product Engineering | Engineering | Tooling and workflows that help teams ship software. | Dev Portal, Buildkite | local setup, CI pipeline | code | 190 | #nsl-devex | Priya Shah | nsl-devex-oncall |
+| Identity Platform | NSL-IDP | Core Services | Platform | Authentication, authorization, and account lifecycle. | Identity API, Admin Console | login, permissions, SSO | lock | 225 | #nsl-identity | Mateo Ruiz | nsl-identity-oncall |
+| Observability | NSL-OBS | Core Services | Platform | Metrics, logs, traces, and production health. | Grafana, Alertmanager | alert, dashboard, incident | activity | 245 | #nsl-observability | Erin Cole | nsl-observability-oncall |
+
+Domains
+
+| Name | Color | Description |
+|---|---|---|
+| Engineering | 190 | Product development and developer productivity. |
+| Platform | 235 | Shared services and operational foundations. |
+
+Links
+
+| Source Key | Target Key | Reason |
+|---|---|---|
+| NSL-DXP | NSL-IDP | Developer tools use platform identity and access controls. |
+| NSL-OBS | NSL-IDP | Identity service telemetry is monitored by Observability. |
+```
 
 **Company config**
 
 | Key | Value |
 |---|---|
-| Name | Helix Commerce |
-| Icon | cart |
-| Color | 215 |
-| Description | Commerce storefront, fulfillment, and trust & safety. |
+| Name | Northstar Labs |
+| Icon | building |
+| Color | 205 |
+| Description | Software products, developer tooling, and platform operations. |
 
-**Teams** (minimum columns)
+**Teams**
 
-| Team Name | Queue Key | Tribe | Domain | Description | Applications | Keywords | Icon | Channel | Team Lead | On-call |
-|---|---|---|---|---|---|---|---|---|---|---|
-| Cart & Checkout | HLX-CHK | Conversion | Storefront | Cart, promo codes, checkout funnel. | Cart Service, Checkout Web | cart stuck, checkout | cart | #hlx-checkout | Leo Park | hlx-checkout-oncall |
-| Catalog Search | HLX-SRC | Discovery | Storefront | Product search and ranking. | Search API | search relevance | search | #hlx-search | Sam Lee | hlx-search-oncall |
+| Team Name | Queue Key | Tribe | Domain | Description | Applications | Keywords | Icon | Color | Channel | Team Lead | On-call |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Developer Experience | NSL-DXP | Product Engineering | Engineering | Tooling and workflows that help teams ship software. | Dev Portal, Buildkite | local setup, CI pipeline | code | 190 | #nsl-devex | Priya Shah | nsl-devex-oncall |
+| Identity Platform | NSL-IDP | Core Services | Platform | Authentication, authorization, and account lifecycle. | Identity API, Admin Console | login, permissions, SSO | lock | 225 | #nsl-identity | Mateo Ruiz | nsl-identity-oncall |
+| Observability | NSL-OBS | Core Services | Platform | Metrics, logs, traces, and production health. | Grafana, Alertmanager | alert, dashboard, incident | activity | 245 | #nsl-observability | Erin Cole | nsl-observability-oncall |
+
+**Domains** (optional)
+
+| Name | Color | Description |
+|---|---|---|
+| Engineering | 190 | Product development and developer productivity. |
+| Platform | 235 | Shared services and operational foundations. |
+
+**Links** (optional)
+
+| Source Key | Target Key | Reason |
+|---|---|---|
+| NSL-DXP | NSL-IDP | Developer tools use platform identity and access controls. |
+| NSL-OBS | NSL-IDP | Identity service telemetry is monitored by Observability. |
 
 Set `MOCK_CONFLUENCE=false` and `CONFLUENCE_PAGE_IDS=<your page id>` after the pages exist. Offline/dev without Confluence: keep `MOCK_CONFLUENCE=true` (bundled seed).
 
