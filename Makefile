@@ -74,8 +74,14 @@ sync: ## Trigger a registry sync on the running local stack
 docker-build: ## Build all docker images
 	$(COMPOSE) build
 
-docker-up: ## Boot the full stack (web, services, postgres, redis)
+up: ## Boot the full stack (web, services, postgres, redis)
 	$(COMPOSE) up -d --build --wait
+
+run: ## Start existing full-stack containers without building
+	$(COMPOSE) start --wait
+
+up-web: ## Rebuild and restart only web (leave running dependencies untouched)
+	$(COMPOSE) up -d --build --no-deps --wait web
 
 docker-down: ## Stop the full stack
 	$(COMPOSE) down
@@ -83,4 +89,4 @@ docker-down: ## Stop the full stack
 ci: ## What CI runs: lint, typecheck, unit tests, build
 	pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run build
 
-.PHONY: help setup key dev-infra dev build lint typecheck test test-integration eval db-migrate db-seed sync docker-build docker-up docker-down ci
+.PHONY: help setup key dev-infra dev build lint typecheck test test-integration eval db-migrate db-seed sync docker-build up run up-web docker-down ci

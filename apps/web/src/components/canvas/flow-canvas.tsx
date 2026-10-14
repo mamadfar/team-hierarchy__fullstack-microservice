@@ -10,6 +10,7 @@ import {
   useReactFlow,
   type Edge,
   type FitViewOptions,
+  type OnNodesChange,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useTheme } from 'next-themes';
@@ -62,6 +63,20 @@ function FlowInner({ snapshot, index, matchKeys }: FlowCanvasProps) {
     () => (tab === 'hierarchy' ? hierarchyLayout(snapshot) : explorerLayout(snapshot, DENSITY)),
     [tab, snapshot],
   );
+  const [measurements, setMeasurements] = useState<
+    Record<string, NonNullable<OrbitNode['measured']>>
+  >({});
+  const onNodesChange = useCallback<OnNodesChange<OrbitNode>>((changes) => {
+    const dimensions = changes.filter((change) => change.type === 'dimensions');
+    if (!dimensions.length) return;
+    setMeasurements((previous) => {
+      const next = { ...previous };
+      for (const change of dimensions) {
+        if (change.dimensions) next[change.id] = change.dimensions;
+      }
+      return next;
+    });
+  }, []);
   const matchSet = useMemo(() => (matchKeys ? new Set(matchKeys) : null), [matchKeys]);
   const aiSet = useMemo(() => (aiKeys.length ? new Set(aiKeys) : null), [aiKeys]);
   const neighbors = useMemo(() => {
@@ -77,7 +92,8 @@ function FlowInner({ snapshot, index, matchKeys }: FlowCanvasProps) {
 
   const nodes = useMemo<OrbitNode[]>(() => {
     const hdim = (id: string) => (branchSet ? !branchSet.has(id) : false);
-    return base.nodes.map((n): OrbitNode => {
+    return base.nodes.map((node): OrbitNode => {
+      const n = { ...node, measured: measurements[node.id] };
       switch (n.type) {
         case 'team': {
           const dim = matchSet
@@ -100,7 +116,7 @@ function FlowInner({ snapshot, index, matchKeys }: FlowCanvasProps) {
           return n;
       }
     });
-  }, [base, matchSet, aiSet, selected, neighbors, branchSet, branch]);
+  }, [base, measurements, matchSet, aiSet, selected, neighbors, branchSet, branch]);
 
   const edges = useMemo<Edge[]>(() => {
     return base.edges.map((e): Edge => {
@@ -120,11 +136,7 @@ function FlowInner({ snapshot, index, matchKeys }: FlowCanvasProps) {
       return {
         ...e,
         animated: hot,
-        label: hot ? e.label : undefined,
-        labelStyle: { fontSize: 10, fill: 'var(--text)', fontFamily: 'var(--font-sans)' },
-        labelBgStyle: { fill: 'var(--surface)', fillOpacity: 0.95 },
-        labelBgPadding: [6, 3] as [number, number],
-        labelBgBorderRadius: 5,
+        label: undefined,
         style: {
           stroke: hot ? 'var(--accent)' : 'var(--edge)',
           strokeWidth: hot ? 2 : 1.2,
@@ -177,6 +189,7 @@ function FlowInner({ snapshot, index, matchKeys }: FlowCanvasProps) {
   return (
     <ReactFlow<OrbitNode>
       nodes={nodes}
+      onNodesChange={onNodesChange}
       edges={edges}
       nodeTypes={nodeTypes}
       fitView

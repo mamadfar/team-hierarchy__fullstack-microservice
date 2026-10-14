@@ -8,7 +8,7 @@ const index = buildIndex(snapshot);
 
 const keysFor = (q: string) => searchTeams(snapshot.teams, index, q).map((t) => t.queueKey);
 
-describe('search ranking (real seed, 81 teams)', () => {
+describe('search ranking (real seed, 111 teams)', () => {
   it('returns nothing for an empty/whitespace query', () => {
     expect(keysFor('')).toEqual([]);
     expect(keysFor('   ')).toEqual([]);
@@ -18,8 +18,8 @@ describe('search ranking (real seed, 81 teams)', () => {
     expect(keysFor('pay-chk')[0]).toBe('PAY-CHK');
   });
 
-  it('finds the streaming team for "kafka" via keywords/apps', () => {
-    expect(keysFor('kafka')).toEqual(['DATA-STR']);
+  it('finds streaming and broker infrastructure for "kafka" via keywords/apps', () => {
+    expect(keysFor('kafka')).toEqual(['DATA-STR', 'PLT-EVT']);
   });
 
   it('ranks a name prefix match ("checkout") on PAY-CHK first', () => {
@@ -27,7 +27,7 @@ describe('search ranking (real seed, 81 teams)', () => {
   });
 
   it('ANDs whitespace tokens and sums per-token scores ("card payment")', () => {
-    expect(keysFor('card payment')).toEqual(['PAY-CRD', 'PAY-POS', 'PAY-CHK']);
+    expect(keysFor('card payment')).toEqual(['PAY-TOK', 'PAY-CRD', 'PAY-POS', 'PAY-CHK']);
   });
 
   it('matches keywords ("gdpr" → privacy team, "invoice" → invoicing team)', () => {

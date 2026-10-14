@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.2.10 - 2026-10-14
+
+- Expand Aurora Group's mock registry from 81 to 111 teams with distinct ownership descriptions, applications, keywords, and fictional contact channels.
+- Add full Markdown Confluence copy areas for all three companies to the README, including domain metadata, existing collaboration links, and routing demo questions.
+- Cover new teams and neighboring ownership boundaries in the offline retrieval evaluation; validate seed integrity and Confluence table parity.
+
+## 0.2.9 - 2026-10-14
+
+- Restore visible Explorer and Hierarchy minimap diagrams by retaining measured node dimensions, with desktop and mobile navigation coverage.
+
+## 0.2.8 — 2026-10-14
+
+- Add `make run` to start existing full-stack containers without building images.
+
+## 0.2.7 - 2026-10-13
+
+- Show full relationship reasons in wrapped detail-panel rows instead of overlapping map-edge labels, while preserving highlighted connections.
+- Use native related-team buttons to keep keyboard navigation from closing the newly selected panel.
+- Add `make up-web` to rebuild and restart only web without restarting its dependencies.
+
+## 0.2.6 — 2026-10-13
+
+- Rename the full-stack startup command from `make docker-up` to `make up` and update current command references.
+- Document the strong sync token required to start the registry in real Confluence mode.
+
 ## 0.2.5
 
 - Add a copy/paste-ready Confluence starter page with realistic mock data for company, team, domain, and link tables.

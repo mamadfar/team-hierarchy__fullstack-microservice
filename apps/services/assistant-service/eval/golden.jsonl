@@ -75,3 +75,39 @@
 {"q": "Ticket routing rules keep sending tickets to the wrong queue", "expect": ["OPS-TKT"]}
 {"q": "The help article in the customer faq is outdated", "expect": ["OPS-KB"]}
 {"q": "The support chat widget and the ivr are down for agents", "expect": ["OPS-CCT"]}
+{"q": "A merchant approved a partial refund but the customer still has not received their money back", "expect": ["PAY-RFD"]}
+{"q": "The payment succeeded but our merchant callback endpoint never received its webhook", "expect": ["PAY-WHK"]}
+{"q": "A business uploaded its company registration documents but merchant activation is still pending", "expect": ["PAY-MOB"]}
+{"q": "Our merchant cannot confirm the microdeposit needed to verify their beneficiary bank account", "expect": ["PAY-BAV"]}
+{"q": "A replacement credit card did not update in the saved card vault and the stored payment token is invalid", "expect": ["PAY-TOK"]}
+{"q": "A merchant crossed the volume tier but still pays the old contracted processing fee markup", "expect": ["PAY-PRC"]}
+{"q": "The merchant dashboard cannot download last month's transaction history as a CSV statement", "expect": ["PAY-RPT"]}
+{"q": "The daily spending ceiling did not reset and the transaction limit counter blocks purchases", "expect": ["RISK-LIM"]}
+{"q": "The merchant dispute portal refuses to attach a proof of delivery receipt to the evidence bundle", "expect": ["RISK-EVD"]}
+{"q": "Who reviews the rolling reserve percentage assigned during merchant underwriting?", "expect": ["RISK-UWR"]}
+{"q": "The product record has the correct SKU but its image and category changes never publish to the storefront", "expect": ["CG-CAT"]}
+{"q": "Two shoppers bought the last unit because the warehouse stock reservation allowed overselling", "expect": ["CG-STK"]}
+{"q": "Payment is confirmed but Order Hub never created an order for the shopper", "expect": ["CG-ORD"]}
+{"q": "Before purchase the estimated arrival date promises next day delivery for a postcode outside carrier coverage", "expect": ["CG-ETA"]}
+{"q": "The dispatched parcel has new carrier scans but the tracking link still shows the old shipment status", "expect": ["CG-SHP"]}
+{"q": "A customer cannot print the return label after their RMA was approved", "expect": ["CG-RTN"]}
+{"q": "A third party seller gets a permissions error uploading bulk offers in the marketplace seller portal", "expect": ["CG-SLR"]}
+{"q": "Verified purchase reviews appear on the product page but their stars are missing from the rating average", "expect": ["CG-REV"]}
+{"q": "The customer selected newsletter opt out in the preference center but their unsubscribe choice was ignored", "expect": ["CG-CNS"]}
+{"q": "The customer cohort refresh completed but audience eligibility still includes customers outside the segment", "expect": ["DATA-SEG"]}
+{"q": "Private DNS lookups return NXDOMAIN after we changed VPC peering and the VPN route", "expect": ["PLT-NET"]}
+{"q": "The shared blob bucket denies uploads and its presigned download URLs immediately expire", "expect": ["PLT-OBJ"]}
+{"q": "Our regional disaster recovery drill found immutable backups missing from the recovery vault retention window", "expect": ["PLT-BKR"]}
+{"q": "The emergency kill switch is enabled but the feature flag SDK still evaluates the stale rollout rule", "expect": ["PLT-FLG"]}
+{"q": "Kafka broker disks are full and partitions are under replicated across the cluster", "expect": ["PLT-EVT"]}
+{"q": "The shared cron scheduler never fired the scheduled task after a timezone change", "expect": ["PLT-JOB"]}
+{"q": "The internal service directory shows the wrong owning team and a stale oncall contact for a repository", "expect": ["PLT-OWN"]}
+{"q": "An employee was offboarded in HR yesterday but SCIM provisioning never deactivated their accounts", "expect": ["OPS-JML"]}
+{"q": "The external payroll provider rejected the salary export because its file mapping changed", "expect": ["OPS-PAY"]}
+{"q": "The support agent shift roster lost all break allocations after the staffing schedule was published", "expect": ["OPS-WFM"]}
+{"q": "The return label printed correctly but an approved refund has been pending for a week", "expect": ["PAY-RFD"]}
+{"q": "The payment webhook says success but the order state is stuck before fulfillment handoff", "expect": ["CG-ORD"]}
+{"q": "Kafka brokers are healthy but the orders topic consumer lag keeps growing in the streaming pipeline", "expect": ["DATA-STR"]}
+{"q": "Employee SSO works but the new hire's accounts were never created by the HR lifecycle provisioner", "expect": ["OPS-JML"]}
+{"q": "The newsletter system delivered messages successfully to customers who had opted out in their consent preferences", "expect": ["CG-CNS"]}
+{"q": "The dispute deadline is tomorrow and an analyst needs to submit the assembled chargeback evidence to the card scheme", "expect": ["RISK-DIS"]}

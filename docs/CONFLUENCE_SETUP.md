@@ -39,6 +39,8 @@ Rules:
 
 ### Helix-style sample (copy-paste)
 
+For the complete **111-team Aurora Group** mock dataset, use the [Aurora Group Confluence pages in the README](../README.md#aurora-group-confluence-pages). It includes one raw Markdown copy area per company, domain colors, collaboration links, and routing demo questions. Create three separate company pages and paste as native Confluence tables, not code blocks.
+
 Same rules with commerce naming — also summarized in the root [README](../README.md#confluence-page-layout-mandatory):
 
 | Key | Value |

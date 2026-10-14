@@ -2,7 +2,7 @@
 
 ## What this is
 Orbit — Team Atlas: internal team-discovery + ticket-routing app. React Flow map of companies → domains → tribes → teams, search, detail panel, RAG routing assistant. **Read-only**: registry data is edited in Confluence, ingested by registry-service.
-Stack: pnpm workspace · Next.js 15 (`apps/web`, :3000) · NestJS 11 (`apps/services/registry-service` :4001, `apps/services/assistant-service` :4002) · Postgres 16 + pgvector (:5433 dev) · Redis (:6380 dev). Run: `make setup && make docker-up` (offline via `MOCK_CONFLUENCE=true`).
+Stack: pnpm workspace · Next.js 15 (`apps/web`, :3000) · NestJS 11 (`apps/services/registry-service` :4001, `apps/services/assistant-service` :4002) · Postgres 16 + pgvector (:5433 dev) · Redis (:6380 dev). Run: `make setup && make up` (offline via `MOCK_CONFLUENCE=true`).
 
 ## Scope routing
 Read this file first, then ONLY the scoped file for the package you touch. Do not load other scoped files unless the task crosses packages.
@@ -70,7 +70,8 @@ Before commit: `make lint && make typecheck && make test` (green-only; no skippe
 ```bash
 make setup            # install + .env
 make dev-infra && make dev   # local watch mode (pg :5433, redis :6380)
-make docker-up        # full stack, zero manual steps (MOCK_CONFLUENCE=true)
+make up               # full stack, zero manual steps (MOCK_CONFLUENCE=true)
+make up-web           # rebuild/restart only web; existing local stack required
 make test             # unit tests, all packages
 make eval             # RAG retrieval gate (top-3 >= 90%)
 ```

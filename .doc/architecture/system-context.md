@@ -53,4 +53,4 @@ graph TB
     asst -->|healthy| rds
 ```
 
-Healthchecks gate `depends_on`; the registry migrates + boot-syncs on start, so `make docker-up` renders the seeded registry with zero manual steps. Dev variant (`docker-compose.dev.yml`) runs only postgres (host :5433) + redis (host :6380).
+Healthchecks gate `depends_on`; the registry migrates + boot-syncs on start, so `make up` renders the seeded registry with zero manual steps. Dev variant (`docker-compose.dev.yml`) runs only postgres (host :5433) + redis (host :6380).

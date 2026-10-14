@@ -10,7 +10,7 @@
 - **Embeddings behind LangChain's `Embeddings` interface** (`embeddings.factory.ts`): `mock` (deterministic hashed n-grams, offline default) | `gemini` (`gemini-embedding-001` → 1536-d) — provider swap is one env var.
 - **Prompts are deliverables** (`chat/prompts.ts`): the answer prompt evolved from the prototype's `sendChat` (which used a fragile `TEAMS: KEY1, KEY2` text suffix) to candidate-scoped grounding + a structured-output tool; a separate query-rewrite prompt translates complaint language into directory language ("can't log in" → "login authentication SSO password sign-in account access").
 - **Double grounding**: prompt restricts the model to the 8 candidates AND `answer-filter.ts` drops any key not in the retrieved set — an invented key cannot reach the UI.
-- **Offline fallback**: without `GEMINI_API_KEY` the service answers extractively (templated, localized, top-2 teams) so `make docker-up` works with zero secrets.
+- **Offline fallback**: without `GEMINI_API_KEY` the service answers extractively (templated, localized, top-2 teams) so `make up` works with zero secrets.
 
 Real code — the fusion step ([retrieval/core/hybrid.ts](../../apps/services/assistant-service/src/retrieval/core/hybrid.ts)):
 

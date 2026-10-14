@@ -4,7 +4,7 @@ import type { RetrievedTeam } from '../retrieval/core/hybrid';
 /**
  * Deterministic extractive answers used when GEMINI_API_KEY is unset (or
  * the LLM call fails): plain-text template in the requested language naming
- * the top-2 retrieved teams. Keeps `make docker-up` fully working offline.
+ * the top-2 retrieved teams. Keeps `make up` fully working offline.
  */
 
 const SUGGESTION: Record<Locale, (t1: string, t2: string | null) => string> = {

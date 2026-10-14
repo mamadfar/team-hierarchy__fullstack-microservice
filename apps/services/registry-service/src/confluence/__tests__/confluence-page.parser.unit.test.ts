@@ -1,8 +1,12 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import { TeamSchema } from '@orbit/shared';
 
 import { AppError } from '../../common/app-error';
+import { SeedSource } from '../../sync/seed-source';
 import { ConfluencePageParser } from '../confluence-page.parser';
 
 // ---- storage-format fixture builders --------------------------------------
@@ -72,6 +76,56 @@ const CTX = { pageId: '84213977', position: 0 };
 
 describe('ConfluencePageParser', () => {
   const parser = new ConfluencePageParser();
+
+  it('imports the README Aurora Markdown copy areas without losing seed data', () => {
+    const readme = readFileSync(resolve(__dirname, '../../../../../../README.md'), 'utf8');
+    const copyAreas = [...readme.matchAll(/```markdown\n([\s\S]*?)\n```/g)];
+    const registry = new SeedSource().load();
+    expect(copyAreas).toHaveLength(registry.companies.length);
+    const importedLinks = [];
+
+    for (const [position, expected] of registry.companies.entries()) {
+      const markdown = copyAreas[position]?.[1] ?? '';
+      const tables = markdown.split('\n\n').filter((part) => part.startsWith('| '));
+      expect(tables).toHaveLength(4);
+      const html = tables.map((table) => {
+        const rows = table.split('\n').map((line) =>
+          line.slice(1, -1).split('|').map((cell) =>
+            cell.trim().replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+          ),
+        );
+        return xTable(rows[0] ?? [], rows.slice(2));
+      }).join('');
+      const parsed = parser.parsePage(html, {
+        pageId: expected.company.confluencePageId ?? '',
+        position,
+      });
+      const { slug: expectedSlug, ...expectedConfig } = expected.company;
+      expect(expectedSlug).toBeTruthy();
+      expect(parsed.company).toMatchObject(expectedConfig);
+      expect(parsed.teams).toHaveLength(expected.teams.length);
+
+      for (const team of expected.teams) {
+        const imported = parsed.teams.find((candidate) => candidate.queueKey === team.queueKey);
+        const { tribeSlug, ...fields } = team;
+        expect(imported).toMatchObject(fields);
+        const expectedTribe = expected.tribes.find((tribe) => tribe.slug === tribeSlug);
+        const importedTribe = parsed.tribes.find((tribe) => tribe.slug === imported?.tribeSlug);
+        expect(importedTribe?.name).toBe(expectedTribe?.name);
+        const expectedDomain = expected.domains.find((domain) => domain.slug === expectedTribe?.domainSlug);
+        const importedDomain = parsed.domains.find((domain) => domain.slug === importedTribe?.domainSlug);
+        expect(importedDomain).toMatchObject({
+          name: expectedDomain?.name,
+          hue: expectedDomain?.hue,
+          description: expectedDomain?.description,
+        });
+      }
+      importedLinks.push(...parsed.links);
+    }
+
+    expect(importedLinks).toHaveLength(registry.links.length);
+    expect(importedLinks).toEqual(expect.arrayContaining(registry.links));
+  });
 
   it('parses the happy path: config + teams table, derived domains/tribes, validated teams', () => {
     const html = pageOf(

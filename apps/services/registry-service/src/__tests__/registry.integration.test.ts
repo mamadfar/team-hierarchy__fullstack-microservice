@@ -60,7 +60,7 @@ describe('registry-service (integration)', () => {
     const snapshot = RegistrySnapshotSchema.parse(res.body);
     expect(snapshot.group.name).toBe('Aurora Group');
     expect(snapshot.companies).toHaveLength(3);
-    expect(snapshot.teams).toHaveLength(81);
+    expect(snapshot.teams).toHaveLength(111);
     expect(snapshot.links).toHaveLength(30);
     expect(snapshot.lastSync).not.toBeNull();
     // display order preserved from the seed's position
@@ -86,7 +86,7 @@ describe('registry-service (integration)', () => {
     expect(res.body.length).toBeGreaterThanOrEqual(1);
     const latest = res.body[0];
     expect(latest.status).toBe('success');
-    expect(latest.stats.teams).toBe(81);
+    expect(latest.stats.teams).toBe(111);
     expect(latest.stats.trigger).toBe('boot');
   });
 
@@ -103,12 +103,12 @@ describe('registry-service (integration)', () => {
 
     const ok = await http().post('/sync').set('Authorization', `Bearer ${TEST_TOKEN}`).expect(200);
     expect(ok.body.status).toBe('ok');
-    expect(ok.body.stats.teams).toBe(81);
+    expect(ok.body.stats.teams).toBe(111);
     expect(ok.body.stats.trigger).toBe('manual');
 
     // idempotent: same counts, snapshot still valid after cache bust
     const snap = await http().get('/registry').expect(200);
-    expect(RegistrySnapshotSchema.parse(snap.body).teams).toHaveLength(81);
+    expect(RegistrySnapshotSchema.parse(snap.body).teams).toHaveLength(111);
 
     // 4th hit inside the 60s window exceeds the 3/min throttle
     await http().post('/sync').set('Authorization', `Bearer ${TEST_TOKEN}`).expect(429);

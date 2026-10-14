@@ -177,27 +177,23 @@ export function DetailPanel({ snapshot, index }: DetailPanelProps) {
             <div className={`${sectionLabel} mb-1`}>{t('related')}</div>
             <div className="flex flex-col">
               {related.map(({ team: other, reason }) => (
-                <div
+                <button
                   key={other.queueKey}
+                  type="button"
                   onClick={() => select(other.queueKey)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') select(other.queueKey);
-                  }}
-                  className="flex items-center gap-2 px-2 py-[7px] -mx-2 rounded-lg cursor-pointer hov-surface2"
+                  className="flex items-start gap-2 px-2 py-[7px] -mx-2 rounded-lg cursor-pointer text-left hov-surface2"
                 >
                   <span
-                    className="w-[6px] h-[6px] rounded-full flex-none"
+                    className="w-[6px] h-[6px] rounded-full flex-none mt-[6px]"
                     style={{ background: solid(index.hueOf(other)) }}
                   />
-                  <span className="flex-1 min-w-0 whitespace-nowrap overflow-hidden text-ellipsis">
-                    {other.name}
+                  <span className="flex-1 min-w-0 flex flex-col gap-1">
+                    <span className="break-words">{other.name}</span>
+                    <span className="text-xs text-muted leading-normal break-words">
+                      {reason}
+                    </span>
                   </span>
-                  <span className="text-[10.5px] text-muted italic whitespace-nowrap overflow-hidden text-ellipsis max-w-[110px]">
-                    {reason}
-                  </span>
-                </div>
+                </button>
               ))}
             </div>
           </div>

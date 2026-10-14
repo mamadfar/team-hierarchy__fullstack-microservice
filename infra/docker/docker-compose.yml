@@ -1,7 +1,7 @@
 # ============================================================================
 # Orbit — full stack: web + registry + assistant + postgres(pgvector) + redis.
 # Invoked from the repo root by the Makefile:
-#   make docker-up   ->  docker compose -f infra/docker/docker-compose.yml up -d --build --wait
+#   make up   ->  docker compose -f infra/docker/docker-compose.yml up -d --build --wait
 #
 # Configuration: every ${VAR:-default} below is resolved from the INVOKING
 # SHELL environment (or a `--env-file`). The repo-root .env is NOT auto-loaded,
@@ -128,7 +128,7 @@ services:
       # compose network with the app token — the token never ships to the browser
       REGISTRY_API_URL: http://registry:4001
       SYNC_APP_TOKEN: ${SYNC_APP_TOKEN:-dev-sync-token}
-      # Keep mock+weak-token legal under NODE_ENV=production for local docker-up
+      # Keep mock+weak-token legal under NODE_ENV=production for local make up
       MOCK_CONFLUENCE: ${MOCK_CONFLUENCE:-true}
     ports:
       - "3000:3000"

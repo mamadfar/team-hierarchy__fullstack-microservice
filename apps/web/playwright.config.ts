@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 /**
  * E2E smoke suite. Assumes the dev stack is already running
- * (`make dev-infra && make dev`, or `make docker-up`) with the web app on
+ * (`make dev-infra && make dev`, or `make up`) with the web app on
  * http://localhost:3000. Run with `pnpm --filter @orbit/web test:e2e`.
  */
 export default defineConfig({
